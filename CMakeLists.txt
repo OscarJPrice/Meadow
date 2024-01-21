@@ -4,6 +4,8 @@ project(Meadow VERSION 0.1.0 LANGUAGES C CXX)
 #include(CTest)
 #enable_testing()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
 include_directories(./Working/Include)
 
 aux_source_directory(./Working/Source SOURCE_FILES)
