@@ -8,7 +8,7 @@ include_directories(./Working/Include)
 
 aux_source_directory(./Working/Source SOURCE_FILES)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY Working)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY Working)
 add_executable(Meadow ${SOURCE_FILES})
 
 #set(CPACK_PROJECT_NAME ${PROJECT_NAME})
