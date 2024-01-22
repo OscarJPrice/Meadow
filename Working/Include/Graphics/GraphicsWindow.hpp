@@ -31,7 +31,7 @@ private:
     // Debugging
 #ifndef NDEBUG
     bool verifyLayers();
- #endif
+#endif
 
     void initVk(const char* title);
 

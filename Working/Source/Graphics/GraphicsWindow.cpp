@@ -117,11 +117,11 @@ void GraphicsWindow::createInstance(const char* title) {
 			for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
 				extensions[i] = new char[200];
 				strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
-				#ifndef __APPLE__
+				#ifdef __APPLE__
 				delete[] createInfo.ppEnabledExtensionNames[i];
 				#endif	
 			}
-			#ifndef __APPLE__
+			#ifdef __APPLE__
 			delete[] createInfo.ppEnabledExtensionNames;
 			#endif
 			extensions[createInfo.enabledExtensionCount] = new char[200];
