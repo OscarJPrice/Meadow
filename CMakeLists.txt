@@ -1,18 +1,29 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(Meadow VERSION 0.1.0 LANGUAGES C CXX)
 
-#include(CTest)
-#enable_testing()
+set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-include_directories(./Working/Include)
+find_package(Vulkan REQUIRED)
+include_directories(${Vulkan_INCLUDE_DIRS})
+link_libraries(${Vulkan_LIBRARIES})
+
+
+if(WIN32)
+	include_directories(./Working/Include C:/glfw-3.3.9.bin.WIN64/include )
+	link_libraries(C:/glfw-3.3.9.bin.WIN64/lib-vc2019/glfw3.lib )
+else()
+	include_directories(./Working/Include)
+endif()
+
+if(MSVC)
+    add_compile_options(/wd4820) # Disable warning C4820: 'X': 'X' : '4' bytes padding added after data member 'Y'
+	add_compile_options(/wd4668) # Disable warning C4668: 'WINVER' is not defined as a preprocessor macro, replacing with '0' for '#if/#elif'
+	add_compile_options(/wd5045) # Disable warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
+endif()
 
 aux_source_directory(./Working/Source SOURCE_FILES)
 
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY Working)
-add_executable(Meadow ${SOURCE_FILES})
+add_executable(Meadow ${SOURCE_FILES}  "Working/Source/Graphics/GraphicsWindow.cpp")
 
-#set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-#`set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-#include(CPack)
