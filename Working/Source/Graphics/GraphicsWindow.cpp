@@ -96,45 +96,47 @@ void GraphicsWindow::createInstance(const char* title) {
 	
 	createInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&createInfo.enabledExtensionCount);
 
-	#ifdef __APPLE__ // Apple requires the portability subset extension to be enabled
-		char** extensions = new char* [createInfo.enabledExtensionCount + 1];
+#ifdef __APPLE__ // Apple requires the portability subset extension to be enabled
+	createInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+	
+	char** extensions = new char* [createInfo.enabledExtensionCount + 1];
+	for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
+		extensions[i] = new char[200];
+		strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
+	}
+	extensions[createInfo.enabledExtensionCount] = new char[200];
+	strncpy(extensions[createInfo.enabledExtensionCount], VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, 200);
+
+	createInfo.enabledExtensionCount++;
+	createInfo.ppEnabledExtensionNames = (const char* const*)extensions;
+#endif
+
+#ifndef NDEBUG // Validation layers are only enabled in debug mode
+	if (!verifyLayers()) {
+		throw std::runtime_error("Failed to create instance, not all layers present!");
+	}
+	else {
+		createInfo.enabledLayerCount = (uint32_t)validation_layers.size();
+		createInfo.ppEnabledLayerNames = validation_layers.data();
+
+		char** extensions = new char*[createInfo.enabledExtensionCount + 1];
 		for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
 			extensions[i] = new char[200];
 			strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
+			#ifdef __APPLE__
+			delete[] createInfo.ppEnabledExtensionNames[i];
+			#endif	
 		}
+		#ifdef __APPLE__
+		delete[] createInfo.ppEnabledExtensionNames;
+		#endif
 		extensions[createInfo.enabledExtensionCount] = new char[200];
-		strncpy(extensions[createInfo.enabledExtensionCount], VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, 200);
+		strncpy(extensions[createInfo.enabledExtensionCount], "VK_EXT_debug_utils", 200);
 
 		createInfo.enabledExtensionCount++;
 		createInfo.ppEnabledExtensionNames = (const char* const*)extensions;
-	#endif
-	
-	#ifndef NDEBUG // Validation layers are only enabled in debug mode
-		if (!verifyLayers()) {
-			throw std::runtime_error("Failed to create instance, not all layers present!");
-		}
-		else {
-			createInfo.enabledLayerCount = (uint32_t)validation_layers.size();
-			createInfo.ppEnabledLayerNames = validation_layers.data();
-
-			char** extensions = new char*[createInfo.enabledExtensionCount + 1];
-			for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
-				extensions[i] = new char[200];
-				strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
-				#ifdef __APPLE__
-				delete[] createInfo.ppEnabledExtensionNames[i];
-				#endif	
-			}
-			#ifdef __APPLE__
-			delete[] createInfo.ppEnabledExtensionNames;
-			#endif
-			extensions[createInfo.enabledExtensionCount] = new char[200];
-			strncpy(extensions[createInfo.enabledExtensionCount], "VK_EXT_debug_utils", 200);
-
-			createInfo.enabledExtensionCount++;
-			createInfo.ppEnabledExtensionNames = (const char* const*)extensions;
-		}
-	#endif // NDEBUG
+	}
+#endif // NDEBUG
 
 
 	// Check if all extensions are present
