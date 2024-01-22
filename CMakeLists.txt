@@ -15,6 +15,8 @@ if(WIN32)
 	link_libraries(C:/glfw-3.3.9.bin.WIN64/lib-vc2019/glfw3.lib )
 else()
 	include_directories(./Working/Include)
+	find_package(glfw3 REQUIRED)
+	link_libraries(glfw)
 endif()
 
 if(MSVC)

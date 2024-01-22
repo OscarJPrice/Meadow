@@ -53,10 +53,11 @@ bool GraphicsWindow::verifyLayers() {
 	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 	std::vector<VkLayerProperties> available_layers(layerCount);
 	vkEnumerateInstanceLayerProperties(&layerCount, available_layers.data());
-
+	std::cout<< layerCount << std::endl;
 	for (const auto& layer : validation_layers) {
 		bool found = false;
 		for (uint32_t i = 0; i < layerCount; i++) {
+			std::cout<< layer << " " << available_layers[i].layerName << std::endl;
 			if (strcmp(layer, available_layers[i].layerName) == 0) {
 				found = true;
 				break;
@@ -90,6 +91,20 @@ void GraphicsWindow::createInstance(const char* title) {
 	
 	createInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&createInfo.enabledExtensionCount);
 
+
+	#ifdef __APPLE__ // Apple requires the portability subset extension to be enabled
+		char** extensions = new char* [createInfo.enabledExtensionCount + 1];
+		for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
+			extensions[i] = new char[200];
+			strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
+		}
+		extensions[createInfo.enabledExtensionCount] = new char[200];
+		strncpy(extensions[createInfo.enabledExtensionCount], "VK_KHR_portability_subset", 200);
+
+		createInfo.enabledExtensionCount++;
+		createInfo.ppEnabledExtensionNames = (const char* const*)extensions;
+	#endif
+	
 	#ifndef NDEBUG // Validation layers are only enabled in debug mode
 		if (!verifyLayers()) {
 			throw std::runtime_error("Failed to create instance, not all layers present!");
@@ -102,7 +117,13 @@ void GraphicsWindow::createInstance(const char* title) {
 			for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
 				extensions[i] = new char[200];
 				strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
+				#ifndef __APPLE__
+				delete[] createInfo.ppEnabledExtensionNames[i];
+				#endif	
 			}
+			#ifndef __APPLE__
+			delete[] createInfo.ppEnabledExtensionNames;
+			#endif
 			extensions[createInfo.enabledExtensionCount] = new char[200];
 			strncpy(extensions[createInfo.enabledExtensionCount], "VK_EXT_debug_utils", 200);
 
@@ -111,26 +132,6 @@ void GraphicsWindow::createInstance(const char* title) {
 		}
 	#endif // NDEBUG
 
-
-	#ifdef APPLE // Apple requires the portability subset extension to be enabled
-		char** extensions = new char* [createInfo.enabledExtensionCount + 1];
-		for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
-			extensions[i] = new char[200];
-			strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
-			#ifndef NDEBUG
-			delete[] createInfo.ppEnabledExtensionNames[i];
-			#endif	
-		}
-		#ifndef NDEBUG
-		delete[] createInfo.ppEnabledExtensionNames;
-		#endif
-		extensions[createInfo.enabledExtensionCount] = new char[200];
-		strncpy(extensions[createInfo.enabledExtensionCount], "VK_KHR_portability_subset", 200);
-
-		createInfo.enabledExtensionCount++;
-		createInfo.ppEnabledExtensionNames = (const char* const*)extensions;
-	#endif
-	
 	// Check if all extensions are present
 	if (!verifyExtensions(createInfo.ppEnabledExtensionNames, createInfo.enabledExtensionCount)) {
 		throw std::runtime_error("Failed to create instance, not all extensions present!");
