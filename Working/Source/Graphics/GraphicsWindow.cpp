@@ -1,5 +1,6 @@
 #include "Graphics/GraphicsWindow.hpp"
 #include <iostream>
+#include <cstring>
 GraphicsWindow::GraphicsWindow(int width, int height, const char* title)
 {
 	initWindow(width, height, title);
@@ -25,26 +26,30 @@ void GraphicsWindow::initWindow(int width, int height, const char* title) {
 }
 
 bool GraphicsWindow::verifyExtensions(const char* const* extensions, uint32_t num_extensions) {
-	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+	uint32_t availableExtensionCount = 0;
+	vkEnumerateInstanceExtensionProperties(
+		nullptr, &availableExtensionCount, nullptr);
+	VkExtensionProperties* availableExtensions = 
+		new VkExtensionProperties[availableExtensionCount];
+	vkEnumerateInstanceExtensionProperties(
+		nullptr, &availableExtensionCount, availableExtensions);
 
 	for (uint32_t i = 0; i < num_extensions; i++) { 
 		bool found = false;
-		for (uint32_t j = 0; j < glfwExtensionCount; j++) {
-			std::cout<< extensions[i] << " " << glfwExtensions[j] << std::endl;
-			if (strcmp(extensions[i], glfwExtensions[j]) == 0) {
+		for (uint32_t j = 0; j < availableExtensionCount; j++) {
+			if (strcmp(extensions[i], availableExtensions[j].extensionName) == 0) {
 				found = true;
 				break;
 			}
 		}
 		if (!found) {
 			std::cout << "Extension " << extensions[i] << " not found!" << std::endl;
+			delete[] availableExtensions;
 			return false;
 		}
 	}
-
+	delete[] availableExtensions;
 	return true;
-
 }
 
 #ifndef NDEBUG
@@ -91,7 +96,6 @@ void GraphicsWindow::createInstance(const char* title) {
 	
 	createInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&createInfo.enabledExtensionCount);
 
-
 	#ifdef __APPLE__ // Apple requires the portability subset extension to be enabled
 		char** extensions = new char* [createInfo.enabledExtensionCount + 1];
 		for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
@@ -99,7 +103,7 @@ void GraphicsWindow::createInstance(const char* title) {
 			strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
 		}
 		extensions[createInfo.enabledExtensionCount] = new char[200];
-		strncpy(extensions[createInfo.enabledExtensionCount], "VK_KHR_portability_subset", 200);
+		strncpy(extensions[createInfo.enabledExtensionCount], VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, 200);
 
 		createInfo.enabledExtensionCount++;
 		createInfo.ppEnabledExtensionNames = (const char* const*)extensions;
@@ -132,14 +136,18 @@ void GraphicsWindow::createInstance(const char* title) {
 		}
 	#endif // NDEBUG
 
+
 	// Check if all extensions are present
 	if (!verifyExtensions(createInfo.ppEnabledExtensionNames, createInfo.enabledExtensionCount)) {
 		throw std::runtime_error("Failed to create instance, not all extensions present!");
 	}
 
 	// Create the instance
-	if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-		throw std::runtime_error("Failed to create instance!");
+	VkResult result;
+	if ((result = vkCreateInstance(&createInfo, nullptr, &instance) )!= VK_SUCCESS) {
+		char buffer[50];
+		snprintf(buffer, 50, "Failed to create instance, error code %d", (int)result);
+		throw std::runtime_error(buffer);
 	}
 }
 
