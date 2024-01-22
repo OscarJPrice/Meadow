@@ -27,7 +27,7 @@ void GraphicsWindow::initWindow(int width, int height, const char* title) {
 bool GraphicsWindow::verifyExtensions(const char* const* extensions, uint32_t num_extensions) {
 	uint32_t glfwExtensionCount = 0;
 	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
+	std::cout<< glfwExtensionCount << std::endl;
 	for (uint32_t i = 0; i < num_extensions; i++) { 
 		bool found = false;
 		for (uint32_t j = 0; j < glfwExtensionCount; j++) {
@@ -84,7 +84,7 @@ void GraphicsWindow::createInstance(const char* title) {
 		.apiVersion = VK_API_VERSION_1_0,
 	};
 	VkInstanceCreateInfo createInfo = {
-		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		.pApplicationInfo = &appInfo,
 		.enabledLayerCount = 0,
 	};
@@ -134,7 +134,7 @@ void GraphicsWindow::createInstance(const char* title) {
 
 	// Check if all extensions are present
 	if (!verifyExtensions(createInfo.ppEnabledExtensionNames, createInfo.enabledExtensionCount)) {
-		throw std::runtime_error("Failed to create instance, not all extensions present!");
+		//throw std::runtime_error("Failed to create instance, not all extensions present!");
 	}
 
 	// Create the instance

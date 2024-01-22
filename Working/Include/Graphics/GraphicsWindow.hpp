@@ -1,7 +1,6 @@
 #ifndef GRAPHICS_WINDOW_H
 #define GRAPHICS_WINDOW_H
 
-#include <vulkan/vulkan.h>
 #include <stdexcept>
 #include <vector>
 #include <algorithm>
