@@ -44,7 +44,6 @@ bool GraphicsWindow::verifyExtensions(const char* const* extensions, uint32_t nu
 		nullptr, &availableExtensionCount, availableExtensions.data());
 
 	for (uint32_t i = 0; i < num_extensions; i++) { 
-		bool found = false;
 		for (const auto& availableExtension : availableExtensions) {
 			if (strcmp(extensions[i], availableExtension.extensionName) == 0) {
 				goto end;
@@ -170,8 +169,8 @@ void GraphicsWindow::createInstance(const char* title) {
 
 	VkResult result;
 	if ((result = vkCreateInstance(&createInfo, nullptr, &instance) )!= VK_SUCCESS) {
-		char buffer[50];
-		snprintf(buffer, 50, MSG_FAIL("Failed to create instance, error code %d\n"), (int)result);
+		char buffer[80];
+		snprintf(buffer, 80, MSG_FAIL("Failed to create instance, error code %d\n"), (int)result);
 		throw std::runtime_error(buffer);
 	}
 
