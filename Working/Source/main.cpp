@@ -4,7 +4,7 @@
 
 int main(){
 	try {
-		GraphicsWindow window(800, 600, "Test");
+		GraphicsWindow window(800, 600, "Testing");
 	} catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}

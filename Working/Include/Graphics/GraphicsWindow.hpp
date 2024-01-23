@@ -3,7 +3,10 @@
 
 #include <stdexcept>
 #include <vector>
-#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include "ansi.h"
+
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
