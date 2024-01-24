@@ -1,43 +1,35 @@
-#ifndef GRAPHICS_WINDOW_H
-#define GRAPHICS_WINDOW_H
-
-#include <stdexcept>
-#include <vector>
-#include <iostream>
-#include <cstring>
-#include "ansi.h"
-
+#pragma once
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#include <vector>
 
-class GraphicsWindow {
-       
+class GraphicsWindow  {
     GLFWwindow* window;
     VkInstance instance;
+    const char* name;
+    int width, height;
 
-#ifndef NDEBUG
-    const std::vector<const char*> validation_layers = {
-		"VK_LAYER_KHRONOS_validation"
-	};
-#endif
+    const std::vector<const char*> validationLayers {
+        "VK_LAYER_KHRONOS_validation"
+    };
+
+    #ifndef NDEBUG
+        const bool enableValidationLayers = true;
+    #else
+        const bool enableValidationLayers = false;
+    #endif
 
 public:
-    GraphicsWindow(int width, int height, const char* title);
+    GraphicsWindow(int width, int height, const char* name);
     ~GraphicsWindow();
+    void run();
 private:
-    void initWindow(int width, int height, const char* title);
-    void createInstance(const char* title);
-    bool verifyExtensions(const char* const * extensions, uint32_t num_extensions);
-    
-    // Debugging
-#ifndef NDEBUG
-    bool verifyLayers();
-#endif
+    void CreateVulkanInstance();
+    void InitializeWindow();
+    void InitializeGraphicsENV();
 
-    void initVk(const char* title);
-
-    void loop( );
+    bool CheckValidationLayerSupport();
+    std::vector<const char*> getRequiredExtensions();
+    bool CheckExtensionsSupport(std::vector<const char*> extensions);
 };
-
-#endif // GRAPHICS_WINDOW_H

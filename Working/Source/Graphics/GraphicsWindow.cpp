@@ -1,196 +1,139 @@
 #include "Graphics/GraphicsWindow.hpp"
+#include <cstring>
+#include "ansi.h"
 
-GraphicsWindow::GraphicsWindow(int width, int height, const char* title)
-{
-	initWindow(width, height, title);
-	initVk(title);
-	loop();
+GraphicsWindow::GraphicsWindow(int width, int height, const char* name) : width(width), height(height), name(name) {
+    InitializeWindow();
+    InitializeGraphicsENV();
+    run();
 }
 
-GraphicsWindow::~GraphicsWindow()
-{
-	vkDestroyInstance(instance, nullptr);
+GraphicsWindow::~GraphicsWindow() {
+    vkDestroyInstance(instance, nullptr);
 
-	glfwDestroyWindow(window);
-	glfwTerminate();	
+    glfwDestroyWindow(window);
+
+    glfwTerminate();
 }
 
-void GraphicsWindow::initWindow(int width, int height, const char* title) {
-#ifndef NDEBUG
-	std::cout << "Initializing Window...........";
-#endif
-	glfwInit();
+void GraphicsWindow::InitializeWindow() {
+    glfwInit();
 
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-#ifndef NDEBUG
-	std::cout << FLAG_OK << std::endl;
-#endif
-
+    window = glfwCreateWindow(width, height, name, nullptr, nullptr);
 }
 
-bool GraphicsWindow::verifyExtensions(const char* const* extensions, uint32_t num_extensions) {
-#ifndef NDEBUG
-	std::cout << "Verifying Extensions..........";
-#endif
-	uint32_t availableExtensionCount = 0;
-	vkEnumerateInstanceExtensionProperties(
-		nullptr, &availableExtensionCount, nullptr);
+void GraphicsWindow::CreateVulkanInstance() {
+    VkApplicationInfo appInfo{
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        .pApplicationName = name,
+        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
+        .pEngineName = "No Engine",
+        .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+        .apiVersion = VK_API_VERSION_1_0
+    };
 
-	std::vector<VkExtensionProperties> availableExtensions(availableExtensionCount);
-	vkEnumerateInstanceExtensionProperties(
-		nullptr, &availableExtensionCount, availableExtensions.data());
+    VkInstanceCreateInfo createInfo {
+        .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        .pApplicationInfo = &appInfo,
+        .enabledLayerCount = 0
+    };
 
-	for (uint32_t i = 0; i < num_extensions; i++) { 
-		for (const auto& availableExtension : availableExtensions) {
-			if (strcmp(extensions[i], availableExtension.extensionName) == 0) {
-				goto end;
-			}
-		}
-#ifndef NDEBUG
-		std::cout << MSG_FAIL("Extension " << extensions[i] << " not found!" )<< std::endl;
-#endif
-		return false;
-	end:
-		continue;
-	}
-#ifndef NDEBUG
-	std::cout << FLAG_OK << std::endl;
-#endif
-	return true;
+    if (enableValidationLayers) {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+    }
+
+    std::vector<const char*> extensions = getRequiredExtensions();
+    if (!CheckExtensionsSupport(extensions)) {
+        throw std::runtime_error("not all extensions found!");
+    }
+
+    #ifdef __APPLE__
+        //very fucking necessary
+		createInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR; 
+    #endif
+
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    createInfo.ppEnabledExtensionNames = extensions.data();
+            
+    auto result = vkCreateInstance(&createInfo, nullptr, &instance);
+    if (result != VK_SUCCESS) {
+        throw std::runtime_error("failed to create instance!");
+    }
 }
 
-#ifndef NDEBUG
-bool GraphicsWindow::verifyLayers() {
-#ifndef NDEBUG
-	std::cout << "Verifying Validation Layers...";
-#endif
-
-	uint32_t layerCount = 0;
-	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-	std::vector<VkLayerProperties> available_layers(layerCount);
-	vkEnumerateInstanceLayerProperties(&layerCount, available_layers.data());
-	for (const auto& layer : validation_layers) {
-		for (const auto& available_layer : available_layers) {
-			if (strcmp(layer, available_layer.layerName) == 0) {
-				goto end;
-			}
-		}
-#ifndef NDEBUG
-		std::cout << MSG_FAIL( "Layer " << layer << " not found!" ) << std::endl;
-#endif	
-		return false;
-	end:
-		continue;
-
-	}
-#ifndef NDEBUG
-	std::cout << FLAG_OK << std::endl;
-#endif	
-	return true;
-}
-#endif // NDEBUG
-
-void GraphicsWindow::createInstance(const char* title) {
-#ifndef NDEBUG
-	std::cout << ANSI_START FAINT "Creating Instance:" ANSI_NORMAL << std::endl;
-#endif
-
-	// Create the instance
-	VkApplicationInfo appInfo = {
-		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-		.pApplicationName = title,
-		.applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-		.pEngineName = "No Engine",
-		.engineVersion = VK_MAKE_VERSION(1, 0, 0),
-		.apiVersion = VK_API_VERSION_1_0,
-	};
-	VkInstanceCreateInfo createInfo = {
-		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-		.pApplicationInfo = &appInfo,
-		.enabledLayerCount = 0,
-	};
-	
-	createInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&createInfo.enabledExtensionCount);
-
-#ifdef __APPLE__ // Apple requires the portability subset extension to be enabled
-	char** extensions = new char* [createInfo.enabledExtensionCount + 1];
-	for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
-		extensions[i] = new char[200];
-		strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
-	}
-	extensions[createInfo.enabledExtensionCount] = new char[200];
-	strncpy(extensions[createInfo.enabledExtensionCount], VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, 200);
-
-	createInfo.enabledExtensionCount++;
-	createInfo.ppEnabledExtensionNames = (const char* const*)extensions;
-#endif
-	
-#ifndef NDEBUG // Validation layers are only enabled in debug mode
-	if (!verifyLayers()) {
-		throw std::runtime_error("Failed to create instance, not all layers present!");
-	}
-	else {
-		createInfo.enabledLayerCount = (uint32_t)validation_layers.size();
-		createInfo.ppEnabledLayerNames = validation_layers.data();
-
-		char** extensions = new char*[createInfo.enabledExtensionCount + 1];
-		for (uint32_t i = 0; i < createInfo.enabledExtensionCount; i++) {
-			extensions[i] = new char[200];
-			strncpy(extensions[i], createInfo.ppEnabledExtensionNames[i], 200);
-		#ifdef __APPLE__
-			delete[] createInfo.ppEnabledExtensionNames[i];
-		#endif	
-		}
-	#ifdef __APPLE__
-		delete[] createInfo.ppEnabledExtensionNames;
-	#endif
-		extensions[createInfo.enabledExtensionCount] = new char[200];
-		strncpy(extensions[createInfo.enabledExtensionCount], "VK_EXT_debug_utils", 200);
-
-		createInfo.enabledExtensionCount++;
-		createInfo.ppEnabledExtensionNames = (const char* const*)extensions;
-	}
-#endif // NDEBUG
-
-
-	// Check if all extensions are present
-	if (!verifyExtensions(createInfo.ppEnabledExtensionNames, createInfo.enabledExtensionCount)) {
-		//throw std::runtime_error("Failed to create instance, not all extensions present!");
-	}
-
-	// Create the instance
-
-#ifndef NDEBUG
-	std::cout << "Creating Instance.............";
-#endif
-
-	VkResult result;
-	if ((result = vkCreateInstance(&createInfo, nullptr, &instance) )!= VK_SUCCESS) {
-		char buffer[80];
-		snprintf(buffer, 80, MSG_FAIL("Failed to create instance, error code %d\n"), (int)result);
-		throw std::runtime_error(buffer);
-	}
-
-#ifndef NDEBUG
-	std::cout << FLAG_OK << std::endl;
-#endif
+void GraphicsWindow::InitializeGraphicsENV() {
+    CreateVulkanInstance();
 }
 
-
-void GraphicsWindow::initVk(const char* title) {
-#ifndef NDEBUG
-	std::cout << ANSI_START FAINT "Initializing Vulkan:" ANSI_NORMAL << std::endl ;
-#endif
-	createInstance(title);
-
-
+void GraphicsWindow::run() {
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+    }
 }
 
-void GraphicsWindow::loop() {
-	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
-	}
+std::vector<const char*> GraphicsWindow::getRequiredExtensions() {
+    uint32_t glfwExtensionCount;
+    const char** glfwExtensions =
+        glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+    std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+    #ifdef __APPLE__ 
+        extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+    #endif
+
+    if (enableValidationLayers) {
+         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+    }
+
+    return extensions;
+}
+
+bool GraphicsWindow::CheckExtensionsSupport(std::vector<const char*> extensions) {
+    std::vector<VkExtensionProperties> available_extensions;
+    {
+        uint32_t extension_count = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
+
+        available_extensions.resize(extension_count);
+
+        vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, available_extensions.data());
+    }
+
+    //this is used in place of std::includes because it allows for debug info.
+    for (const char* extension : extensions) {
+        for (const auto& available_extension : available_extensions) {
+            if (strcmp(extension, available_extension.extensionName) == 0) {
+                goto next;
+            }
+        }
+        return false;
+        next: continue;
+    }
+    return true;
+} 
+
+bool GraphicsWindow::CheckValidationLayerSupport() {
+    
+	std::vector<VkLayerProperties> available_layers;
+    {
+        uint32_t layer_count = 0;
+        vkEnumerateInstanceLayerProperties(&layer_count, nullptr);
+        available_layers.resize(layer_count);
+        vkEnumerateInstanceLayerProperties(&layer_count, available_layers.data()); 
+    }
+
+    //this is used in place of std::includes because it allows for debug info.
+    for (const char* layer : validationLayers) {
+        for (VkLayerProperties available_layer : available_layers) {
+            if (strcmp(layer, available_layer.layerName) == 0) {
+                goto next;
+            }
+        }
+        return false;
+        next: continue;
+    }
+    return true;
 }
