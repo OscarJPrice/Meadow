@@ -1,4 +1,5 @@
 #include "Graphics/GraphicsWindow.hpp"
+#include <Logging/Logging.hpp>
 #include <cstring>
 #include "ansi.h"
 
@@ -42,7 +43,8 @@ VkResult destroyDebugUtilsMessengerExtension(
 // The following code is for the GraphicsWindow class.
 
 GraphicsWindow::GraphicsWindow(uint32_t width, uint32_t height, const char* name) : name(name) {
-    initializeWindow(width, height);
+    Log::init();
+	initializeWindow(width, height);
     initializeGraphicsENV();
     run();
 }
@@ -274,20 +276,24 @@ VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsWindow::debugCallback(
 	void *p_user_data
 ) {
 	VkBool32 result = VK_FALSE;
+	std::ofstream* stream; // I would use a reference, but I can't!
 	switch (message_severity) {
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-			//return VK_FALSE;
-			std::cout << FAINT "[VERBOSE] " ANSI_NORMAL;
+			stream = &Log::verbose;
+			*stream << FAINT "[VERBOSE] " ANSI_NORMAL;
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-			return VK_FALSE;
-			std::cout << GREEN_FG "[INFO] " ANSI_NORMAL;
+			stream = &Log::info;
+			*stream << GREEN_FG "[INFO] " ANSI_NORMAL;
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-			std::cout << YELLOW_FG "[WARNING] " ANSI_NORMAL;
+			stream = &Log::warning;
+			*stream << YELLOW_FG "[WARNING] " ANSI_NORMAL;
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-			std::cout << RED_FG_BRIGHT "[ERROR] " ANSI_NORMAL;
+			std::cout << RED_FG_BRIGHT "[ERROR] " ANSI_NORMAL << "Written to Logs/error.log" << std::endl;
+			stream = &Log::error;
+			*stream << RED_FG_BRIGHT "[ERROR] " ANSI_NORMAL;
 			result = VK_TRUE;
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT:
@@ -297,20 +303,20 @@ VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsWindow::debugCallback(
 
 	switch (message_type) {
 		case VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT:
-			std::cout << "[GENERAL]: ";
+			*stream << "[GENERAL]: ";
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT:
-			std::cout << "[VALIDATION]: ";
+			*stream << "[VALIDATION]: ";
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT:
-			std::cout << "[PERFORMANCE]: ";
+			*stream << "[PERFORMANCE]: ";
 			break;
 	}
 
-	std::cout << p_callback_data->pMessage << std::endl;
+	*stream << p_callback_data->pMessage << std::endl;
 	for (uint32_t i = 0; i < p_callback_data->objectCount; i++) {
 		if (p_callback_data->pObjects[i].pObjectName) {
-			std::cout << p_callback_data->pObjects[i].pObjectName << std::endl;
+			*stream << p_callback_data->pObjects[i].pObjectName << std::endl;
 		}
 	}
 

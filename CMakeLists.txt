@@ -5,12 +5,14 @@ set(CMAKE_CXX_STANDARD 20)
 
 find_package(Vulkan REQUIRED)
 
-if(WIN32)
+include_directories(./Working/Include)
+include_directories(./Working/Include/Graphics)
+include_directories(./Working/Include/Logging)
 
-	include_directories(./Working/Include C:/glfw-3.3.9.bin.WIN64/include C:/VulkanSDK/1.3.275.0/Include)
+if(WIN32)
+	include_directories(C:/glfw-3.3.9.bin.WIN64/include C:/VulkanSDK/1.3.275.0/Include)
 	link_libraries(C:/glfw-3.3.9.bin.WIN64/lib-vc2019/glfw3.lib )
 elseif(APPLE)
-	include_directories(./Working/Include)
 	find_package(glfw3 REQUIRED)
 	link_libraries(glfw)
 endif()
@@ -22,7 +24,9 @@ if(MSVC)
 endif()
 
 aux_source_directory(./Working/Source SOURCE_FILES)
-add_executable(Meadow ${SOURCE_FILES}  "Working/Source/Graphics/GraphicsWindow.cpp")
+aux_source_directory(./Working/Source/Graphics SOURCE_FILES)
+aux_source_directory(./Working/Source/Logging SOURCE_FILES)
+add_executable(Meadow ${SOURCE_FILES})
 
 target_link_libraries(Meadow ${Vulkan_LIBRARIES})
 
