@@ -4,7 +4,7 @@
 
 //////////////////////////////////////////////////////
 // The following code is for helper functions.
-constexpr VkResult createDebugUtilsMessengerExtension(
+VkResult createDebugUtilsMessengerExtension(
 	VkInstance instance, 
     const VkDebugUtilsMessengerCreateInfoEXT* create_info,
     const VkAllocationCallbacks* allocator,
@@ -22,7 +22,7 @@ constexpr VkResult createDebugUtilsMessengerExtension(
     }
 }
 
-constexpr VkResult destroyDebugUtilsMessengerExtension(
+VkResult destroyDebugUtilsMessengerExtension(
 	VkInstance instance, 
     const VkAllocationCallbacks* allocator,
     VkDebugUtilsMessengerEXT debug_messenger
@@ -41,7 +41,7 @@ constexpr VkResult destroyDebugUtilsMessengerExtension(
 //////////////////////////////////////////////////////
 // The following code is for the GraphicsWindow class.
 
-GraphicsWindow::GraphicsWindow(int width, int height, const char* name) : name(name) {
+GraphicsWindow::GraphicsWindow(uint32_t width, uint32_t height, const char* name) : name(name) {
     initializeWindow(width, height);
     initializeGraphicsENV();
     run();
@@ -59,7 +59,7 @@ GraphicsWindow::~GraphicsWindow() {
     glfwTerminate();
 }
 
-void GraphicsWindow::initializeWindow(int width, int height) {
+void GraphicsWindow::initializeWindow(uint32_t width, uint32_t height) {
     glfwInit();
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -81,9 +81,9 @@ void GraphicsWindow::createVulkanInstance() {
 
     VkInstanceCreateInfo create_info {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-        .pApplicationInfo = &app_info,
-        .enabledLayerCount = 0,
-		.pNext = nullptr
+		.pNext = nullptr,
+		.pApplicationInfo = &app_info,
+        .enabledLayerCount = 0
     };
 	VkDebugUtilsMessengerCreateInfoEXT debug_create_info;
 
@@ -120,7 +120,7 @@ void GraphicsWindow::initializeGraphicsENV() {
 	pickPhysicalDevice();
 }
 
-int GraphicsWindow::rateDeviceSuitability(VkPhysicalDevice device) {
+uint32_t GraphicsWindow::rateDeviceSuitability(VkPhysicalDevice device) {
 	VkPhysicalDeviceProperties device_properties;
 	VkPhysicalDeviceFeatures device_features;
 	
@@ -128,7 +128,7 @@ int GraphicsWindow::rateDeviceSuitability(VkPhysicalDevice device) {
     vkGetPhysicalDeviceFeatures(device, &device_features);
 
 	//Create a score based on the device's properties.
-	int score = 0;
+	uint32_t score = 0;
 
 	//Discrete GPUs have a significant performance advantage
 	if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
@@ -152,10 +152,10 @@ void GraphicsWindow::pickPhysicalDevice() {
 	std::vector<VkPhysicalDevice> devices(count);
 	vkEnumeratePhysicalDevices(instance, &count, devices.data());
 	
-	int highest_score = 0;
+	uint32_t highest_score = 0;
 	VkPhysicalDevice best_device = VK_NULL_HANDLE;
 	for (const auto& device : devices) {
-		int score = rateDeviceSuitability(device);
+		uint32_t score = rateDeviceSuitability(device);
 		if (score > highest_score) {
 			highest_score = score;
 			best_device = device;
@@ -276,7 +276,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsWindow::debugCallback(
 	VkBool32 result = VK_FALSE;
 	switch (message_severity) {
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-			return VK_FALSE;
+			//return VK_FALSE;
 			std::cout << FAINT "[VERBOSE] " ANSI_NORMAL;
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
@@ -308,7 +308,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsWindow::debugCallback(
 	}
 
 	std::cout << p_callback_data->pMessage << std::endl;
-	for (int i = 0; i < p_callback_data->objectCount; i++) {
+	for (uint32_t i = 0; i < p_callback_data->objectCount; i++) {
 		if (p_callback_data->pObjects[i].pObjectName) {
 			std::cout << p_callback_data->pObjects[i].pObjectName << std::endl;
 		}

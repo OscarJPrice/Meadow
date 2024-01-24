@@ -24,16 +24,16 @@ class GraphicsWindow  {
 
 
 public:
-    GraphicsWindow(int width, int height, const char* name);
+    GraphicsWindow(uint32_t width, uint32_t height, const char* name);
     ~GraphicsWindow();
 
 private:
 
     void run();
     void createVulkanInstance();
-    void initializeWindow(int width, int height);
+    void initializeWindow(uint32_t width, uint32_t height);
     void initializeGraphicsENV();
-    int rateDeviceSuitability(VkPhysicalDevice device);
+    uint32_t rateDeviceSuitability(VkPhysicalDevice device);
     void pickPhysicalDevice();
     void setupDebugCallbackSys();
     void debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& create_info);

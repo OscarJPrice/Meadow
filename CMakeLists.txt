@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 find_package(Vulkan REQUIRED)
 
 if(WIN32)
-	include_directories(./Working/Include C:/glfw-3.3.9.bin.WIN64/include )
+
+	include_directories(./Working/Include C:/glfw-3.3.9.bin.WIN64/include C:/VulkanSDK/1.3.275.0/Include)
 	link_libraries(C:/glfw-3.3.9.bin.WIN64/lib-vc2019/glfw3.lib )
 elseif(APPLE)
 	include_directories(./Working/Include)
