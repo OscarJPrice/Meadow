@@ -3,6 +3,8 @@
 #include <cstring>
 #include "ansi.h"
 #include <set>
+#include <algorithm>
+#include <limits>
 
 //////////////////////////////////////////////////////////////////////////////
 // The following code are helper functions, invisible outside of this file. //
@@ -191,6 +193,7 @@ void GraphicsWindow::initializeGraphicsENV(const char* name) {
 	createSurface();
 	pickPhysicalDevice();
 	createLogicalDevice();
+	createSwapChain();
 }
 
 /**
@@ -229,8 +232,51 @@ uint32_t GraphicsWindow::rateDeviceSuitability(VkPhysicalDevice device) {
  */
 bool GraphicsWindow::isDeviceSuitable(VkPhysicalDevice device) {
 	QueueFamilyIndices indices = GraphicsWindow::findQueueFamilies(device);
-	return indices.isComplete();
+
+	bool extensions_supported = checkDeviceExtensionSupport(device);
+
+	bool swap_chain_adequate = false;
+	if (extensions_supported) {
+		SwapChainSupportDetails swap_chain_support = querySwapChainSupport(device);
+		swap_chain_adequate = !swap_chain_support.formats.empty() && !swap_chain_support.present_modes.empty();
+	}
+
+	return indices.isComplete() && swap_chain_adequate;// && extensions_supported;
 }
+
+/**
+ * @brief Checks if a given Vulkan physical device supports the required device extensions.
+ * 
+ * @param device The Vulkan physical device to check.
+ * @return True if the device supports the required extensions, false otherwise.
+ */
+bool GraphicsWindow::checkDeviceExtensionSupport(VkPhysicalDevice device)
+{
+    uint32_t extension_count;
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
+	std::vector<VkExtensionProperties> available_extensions(extension_count);
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, available_extensions.data());
+
+	std::set<const char*> required_extensions(device_extensions.begin(), device_extensions.end());
+
+	for (const char* extension : device_extensions) {
+		for (const auto& available_extension : available_extensions) {
+			if (strcmp(extension, available_extension.extensionName) == 0) {
+				goto next;
+			}
+		}
+		#ifndef NDEBUG
+			Log::error << RED_FG_BRIGHT "[ERROR] " ANSI_NORMAL "Extension " << extension << " not supported!" << std::endl;
+			throw std::runtime_error("required extension not supported!");
+		#endif
+		return false;
+		next: continue;
+
+	}
+
+	return true;
+
+} 
 
 /**
  * @brief Structure to store queue family indices for a graphics window.
@@ -259,6 +305,138 @@ GraphicsWindow::QueueFamilyIndices GraphicsWindow::findQueueFamilies(VkPhysicalD
 		}
 	}
 	return indices;
+}
+
+
+/**
+ * Queries the swap chain support details for a given physical device.
+ *
+ * @param device The Vulkan physical device to query.
+ * @return The swap chain support details.
+ */
+GraphicsWindow::SwapChainSupportDetails GraphicsWindow::querySwapChainSupport(VkPhysicalDevice device) {
+	SwapChainSupportDetails details;
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+
+	uint32_t format_count;
+	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &format_count, nullptr);
+
+	if (format_count != 0) {
+		details.formats.resize(format_count);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &format_count, details.formats.data());
+	}
+
+	uint32_t present_mode_count;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &present_mode_count, nullptr);
+
+	if (present_mode_count != 0) {
+		details.present_modes.resize(present_mode_count);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &present_mode_count, details.present_modes.data());
+	}
+
+    return details;
+}
+
+
+
+VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& available_formats) {
+	for (const auto& available_format : available_formats) {
+		if (available_format.format == VK_FORMAT_B8G8R8A8_SRGB 
+			&& available_format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+			return available_format;
+		}
+	}
+	// for (const auto& available_format : available_formats) {
+	// 	if (available_format.format == VK_FORMAT_B8G8R8A8_UNORM 
+	// 		&& available_format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+	// 		return available_format;
+	// 	}
+	// }
+	return available_formats[0];
+}	
+
+/**
+ * @brief Chooses a swap chain present mode.
+ * 
+ * This function chooses a swap chain present mode from the available present modes.
+ * It first checks if VK_PRESENT_MODE_MAILBOX_KHR is available, and if so, returns it.
+ * If not, it checks if VK_PRESENT_MODE_IMMEDIATE_KHR is available, and if so, returns it.
+ * If neither are available, it returns VK_PRESENT_MODE_FIFO_KHR.
+ * 
+ * @param available_present_modes A vector of available present modes.
+ * @return VkPresentModeKHR The chosen present mode.
+ */
+VkPresentModeKHR GraphicsWindow::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& available_present_modes) {
+	VkPresentModeKHR best_mode = VK_PRESENT_MODE_FIFO_KHR;
+	for (const auto& mode : available_present_modes) {
+		if (mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+			best_mode = mode;
+		}
+	}
+
+	return best_mode;
+}
+
+/**
+ * @brief Chooses a swap chain extent.
+ * 
+ * This function chooses a swap chain extent from the available capabilities.
+ * If the current extent is not set to the maximum value, it returns the current extent.
+ * Otherwise, it returns the extent that best matches the window width and height.
+ * 
+ * @param capabilities The swap chain capabilities.
+ * @return VkExtent2D The chosen swap chain extent.
+ */
+VkExtent2D GraphicsWindow::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
+	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+		return capabilities.currentExtent;
+	}
+	else {
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height); //why the fuck are these ints? lord knows!
+
+		VkExtent2D actual_extents = {
+			(uint32_t)width, 
+			(uint32_t)height
+		};
+
+		actual_extents.width = std::clamp(actual_extents.width, 
+			capabilities.minImageExtent.width, 
+			capabilities.maxImageExtent.width);
+		
+		actual_extents.height = std::clamp(actual_extents.height, 
+			capabilities.minImageExtent.height,
+			capabilities.maxImageExtent.height);
+
+		return actual_extents;
+	}
+}
+
+void GraphicsWindow::createSwapChain() {
+	SwapChainSupportDetails swap_chain_support = querySwapChainSupport(physical_device);
+
+	VkSurfaceFormatKHR surface_format = chooseSwapSurfaceFormat(swap_chain_support.formats);
+
+	VkExtent2D extent = chooseSwapExtent(swap_chain_support.capabilities);
+
+	uint32_t image_count = swap_chain_support.capabilities.minImageCount + 1;
+
+	if (swap_chain_support.capabilities.maxImageCount != 0 && 
+	image_count > swap_chain_support.capabilities.maxImageCount) {
+		image_count = swap_chain_support.capabilities.maxImageCount;
+	}
+
+	VkSwapchainCreateInfoKHR create_info {
+		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+		.surface = surface,
+		.minImageCount = image_count,
+		.imageFormat = surface_format.format,
+		.imageColorSpace = surface_format.colorSpace,
+		.imageExtent = extent,
+		.imageArrayLayers = 1,
+		.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
+	};
+
 }
 
 void GraphicsWindow::createSurface() {
@@ -347,7 +525,6 @@ void GraphicsWindow::debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreat
 	create_info.pUserData = nullptr;
 }
 
-
 /**
  * Creates the logical device for the graphics window.
  */
@@ -373,12 +550,6 @@ void GraphicsWindow::createLogicalDevice() {
 	}
 
 	VkPhysicalDeviceFeatures device_features{};
-	std::vector<const char*> device_extensions = {
-		//VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-	#ifdef __APPLE__
-		"VK_KHR_portability_subset",
-	#endif
-	};
 	VkDeviceCreateInfo create_info {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.pQueueCreateInfos = queue_create_infos.data(),
