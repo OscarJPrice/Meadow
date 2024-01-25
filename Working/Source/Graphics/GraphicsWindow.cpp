@@ -380,6 +380,8 @@ void GraphicsWindow::createLogicalDevice() {
 		throw std::runtime_error("failed to create logical device!");
 	}
 
+	vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &graphics_queue);
+
 }
 
 /**

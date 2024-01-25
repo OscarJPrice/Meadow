@@ -17,6 +17,7 @@ class GraphicsWindow  {
     VkDebugUtilsMessengerEXT debug_messenger;
     VkPhysicalDevice physical_device = VK_NULL_HANDLE;
     VkDevice device;
+    VkQueue graphics_queue;
 
     const std::vector<const char*> validation_layers {
         "VK_LAYER_KHRONOS_validation"
