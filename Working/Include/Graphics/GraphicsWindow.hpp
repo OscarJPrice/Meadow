@@ -5,13 +5,18 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <iostream>
+#include <optional>
 
+/**
+ * @class GraphicsWindow
+ * @brief Represents a graphics window for rendering graphics using Vulkan.
+ */
 class GraphicsWindow  {
     GLFWwindow* window;
     VkInstance instance;
     VkDebugUtilsMessengerEXT debug_messenger;
     VkPhysicalDevice physical_device = VK_NULL_HANDLE;
-    const char* name;
+    VkDevice device;
 
     const std::vector<const char*> validation_layers {
         "VK_LAYER_KHRONOS_validation"
@@ -28,19 +33,29 @@ public:
     ~GraphicsWindow();
 
 private:
+    struct QueueFamilyIndices {
+        std::optional<uint32_t> graphics_family;
+        inline bool isComplete() {
+            return graphics_family.has_value();
+        }
+    };
+
 
     void run();
-    void createVulkanInstance();
-    void initializeWindow(uint32_t width, uint32_t height);
-    void initializeGraphicsENV();
+    void createVulkanInstance(const char* name);
+    void initializeWindow(uint32_t width, uint32_t height, const char* name);
+    void initializeGraphicsENV(const char* name);
     uint32_t rateDeviceSuitability(VkPhysicalDevice device);
+    bool isDeviceSuitable(VkPhysicalDevice device);
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     void pickPhysicalDevice();
     void setupDebugCallbackSys();
     void debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& create_info);
+    void createLogicalDevice();
 
 
     bool checkValidationLayerSupport();
-    std::vector<const char*> getRequiredExtensions();
+    std::vector<const char*> getInstanceRequiredExtensions();
     bool checkExtensionsSupport(std::vector<const char*> extensions);
 
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
