@@ -18,15 +18,17 @@ class GraphicsWindow  {
     VkPhysicalDevice physical_device = VK_NULL_HANDLE;
     VkDevice device;
     VkQueue graphics_queue;
+    VkSurfaceKHR surface;
+    VkQueue present_queue;
 
     const std::vector<const char*> validation_layers {
         "VK_LAYER_KHRONOS_validation"
     };
-    #ifndef NDEBUG
-        const bool ENABLE_VALIDATION_LAYERS = true;
-    #else
-        const bool ENABLE_VALIDATION_LAYERS = false;
-    #endif
+#ifndef NDEBUG
+    const bool ENABLE_VALIDATION_LAYERS = true;
+#else
+    const bool ENABLE_VALIDATION_LAYERS = false;
+#endif
 
 
 public:
@@ -36,8 +38,9 @@ public:
 private:
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphics_family;
+        std::optional<uint32_t> present_family;
         inline bool isComplete() {
-            return graphics_family.has_value();
+            return graphics_family.has_value() && present_family.has_value();
         }
     };
 
@@ -49,6 +52,7 @@ private:
     uint32_t rateDeviceSuitability(VkPhysicalDevice device);
     bool isDeviceSuitable(VkPhysicalDevice device);
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+    void createSurface();
     void pickPhysicalDevice();
     void setupDebugCallbackSys();
     void debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& create_info);

@@ -2,7 +2,7 @@
 #include <Logging/Logging.hpp>
 #include <cstring>
 #include "ansi.h"
-
+#include <set>
 
 //////////////////////////////////////////////////////////////////////////////
 // The following code are helper functions, invisible outside of this file. //
@@ -88,6 +88,8 @@ GraphicsWindow::~GraphicsWindow() {
 		destroyDebugUtilsMessengerExtension(instance, nullptr, debug_messenger);
 	}
 	vkDestroyDevice(device, nullptr);
+
+	vkDestroySurfaceKHR(instance, surface, nullptr);
 
     vkDestroyInstance(instance, nullptr);
 
@@ -186,6 +188,7 @@ void GraphicsWindow::initializeWindow(uint32_t width, uint32_t height, const cha
 void GraphicsWindow::initializeGraphicsENV(const char* name) {
     createVulkanInstance(name);
 	setupDebugCallbackSys();
+	createSurface();
 	pickPhysicalDevice();
 	createLogicalDevice();
 }
@@ -241,14 +244,27 @@ GraphicsWindow::QueueFamilyIndices GraphicsWindow::findQueueFamilies(VkPhysicalD
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, queue_families.data());
 		int i = 0; 
 		for (const auto& queue_family : queue_families) {
+			VkBool32 present_support = false;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &present_support);
+
 			if (queue_family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 				indices.graphics_family = i;
-				break;
 			}
+
+			if (present_support) {
+				indices.present_family = i;
+			}
+
 			i++;
 		}
 	}
 	return indices;
+}
+
+void GraphicsWindow::createSurface() {
+	if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create window surface!");
+	}
 }
 
 /**
@@ -338,17 +354,23 @@ void GraphicsWindow::debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreat
 void GraphicsWindow::createLogicalDevice() {
 	QueueFamilyIndices indices = findQueueFamilies(physical_device);
 
+	std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
+	std::set<uint32_t> unique_queue_families = {
+		indices.graphics_family.value(),
+		indices.present_family.value()
+	};
+
 	float queue_priority = 1.0f;
 
-	VkDeviceQueueCreateInfo queue_create_info {
-		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-		.queueFamilyIndex = indices.graphics_family.value(),
-		.queueCount = 1,
-		.pQueuePriorities = &queue_priority
-
-	};
-	
-	
+	for (const auto& queue_family : unique_queue_families) {
+		VkDeviceQueueCreateInfo queue_create_info {
+			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+			.queueFamilyIndex = queue_family,
+			.queueCount = 1,
+			.pQueuePriorities = &queue_priority
+		};
+		queue_create_infos.push_back(queue_create_info);
+	}
 
 	VkPhysicalDeviceFeatures device_features{};
 	std::vector<const char*> device_extensions = {
@@ -357,17 +379,16 @@ void GraphicsWindow::createLogicalDevice() {
 		"VK_KHR_portability_subset",
 	#endif
 	};
-
-	VkDeviceCreateInfo create_info{
+	VkDeviceCreateInfo create_info {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		.pQueueCreateInfos = &queue_create_info,
-		.queueCreateInfoCount = 1,
+		.pQueueCreateInfos = queue_create_infos.data(),
+		.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size()),
 		.pEnabledFeatures = &device_features,
 		.enabledExtensionCount = static_cast<uint32_t>(device_extensions.size()),
 		.ppEnabledExtensionNames = device_extensions.data(),
 	};
 
-	//compatibility with older versions of Vulkan
+	// Compatibility with older versions of Vulkan
 	if (ENABLE_VALIDATION_LAYERS) {
 		create_info.enabledLayerCount = static_cast<uint32_t>(validation_layers.size());
 		create_info.ppEnabledLayerNames = validation_layers.data();
@@ -380,8 +401,7 @@ void GraphicsWindow::createLogicalDevice() {
 		throw std::runtime_error("failed to create logical device!");
 	}
 
-	vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &graphics_queue);
-
+	vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &present_queue);
 }
 
 /**
@@ -502,6 +522,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsWindow::debugCallback(
 			*stream << GREEN_FG "[INFO] " ANSI_NORMAL;
 			break;
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+			std::cout<< YELLOW_FG "[WARNING] " ANSI_NORMAL << "Written to Logs/warning.log" << std::endl;
 			stream = &Log::warning;
 			*stream << YELLOW_FG "[WARNING] " ANSI_NORMAL;
 			break;
