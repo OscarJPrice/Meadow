@@ -13,3 +13,4 @@ CMakeSettings.json
 Meadow
 vkvia*
 Logs
+*.code-workspace
