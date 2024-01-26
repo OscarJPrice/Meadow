@@ -110,7 +110,7 @@ VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfac
 	// 	}
 	// }
 	return available_formats[0];
-}	
+}
 
 /**
  * @brief Chooses the best presentation mode for the swap chain.
@@ -148,32 +148,33 @@ VkPresentModeKHR SwapChain::chooseSwapPresentMode(const std::vector<VkPresentMod
  */
 VkExtent2D SwapChain::chooseSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities) {
 
-// Check if the current extent is already set
-if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
-    // Return the current extent if it is already set
-    return capabilities.currentExtent;
-}
-else {
-    // Get the width and height of the framebuffer
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height); //why the fuck are these ints? lord knows!
+    // Check if the current extent is already set
+    if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+        // Return the current extent if it is already set
+        return capabilities.currentExtent;
+    }
+    else {
+        // Get the width and height of the framebuffer
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height); //why the fuck are these ints? lord knows!
 
-    // Create the actual extent based on the framebuffer size
-    VkExtent2D actual_extents = {
-        (uint32_t)width, 
-        (uint32_t)height
-    };
+        // Create the actual extent based on the framebuffer size
+        VkExtent2D actual_extents = {
+            (uint32_t)width, 
+            (uint32_t)height
+        };
 
-    // Clamp the actual extent to the minimum and maximum extents supported by the surface capabilities
-    actual_extents.width = std::clamp(actual_extents.width, 
-        capabilities.minImageExtent.width, 
-        capabilities.maxImageExtent.width);
-    
-    actual_extents.height = std::clamp(actual_extents.height, 
-        capabilities.minImageExtent.height,
-        capabilities.maxImageExtent.height);
+        // Clamp the actual extent to the minimum and maximum extents supported by the surface capabilities
+        actual_extents.width = std::clamp(actual_extents.width, 
+            capabilities.minImageExtent.width, 
+            capabilities.maxImageExtent.width);
+        
+        actual_extents.height = std::clamp(actual_extents.height, 
+            capabilities.minImageExtent.height,
+            capabilities.maxImageExtent.height);
 
-    // Return the chosen swap extent
-    return actual_extents;
+        // Return the chosen swap extent
+        return actual_extents;
+    }
 }
 
