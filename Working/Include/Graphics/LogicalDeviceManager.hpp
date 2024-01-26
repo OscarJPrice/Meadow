@@ -3,6 +3,10 @@
 
 #include <vulkan/vulkan.h>
 
+/**
+ * @brief Wrapper class for the logical device
+ * 
+ */
 class LogicalDeviceManager {
     VkDevice device = VK_NULL_HANDLE;
     VkQueue present_queue = VK_NULL_HANDLE;

@@ -4,12 +4,22 @@
 #include <optional>
 #include <vulkan/vulkan.h>
 
+
+/**
+ * @brief Namespace for queue utilities
+ * 
+ */
 namespace QueueUtils {
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphics_family;
         std::optional<uint32_t> present_family;
 
-        // Check if both graphics and present families are available
+        /**
+         * @brief Check if the queue families are complete
+         * 
+         * @return true if the queue families are complete
+         * @return false if the queue families are not complete
+         */
         inline bool isComplete() {
             return graphics_family.has_value() && present_family.has_value();
         }

@@ -4,6 +4,10 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+/**
+ * @brief Wrapper class for the surface
+ * 
+ */
 class Surface {
     VkSurfaceKHR surface;
     VkInstance instance;

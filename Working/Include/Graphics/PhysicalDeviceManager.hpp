@@ -4,6 +4,12 @@
 #include <vulkan/vulkan.h>
 #include "QueueUtils.hpp"
 #include "Graphics/SwapChain.hpp"
+
+
+/**
+ * @brief Wrapper class for the physical device
+ * 
+ */
 class PhysicalDeviceManager {
     VkPhysicalDevice device = VK_NULL_HANDLE;
 

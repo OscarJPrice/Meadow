@@ -8,6 +8,10 @@
 #include "Graphics/LogicalDeviceManager.hpp"
 #include "Graphics/SwapChain.hpp"
 
+/**
+ * @brief Main application class
+ * 
+ */
 class Application {
     Window window;
     Instance instance;

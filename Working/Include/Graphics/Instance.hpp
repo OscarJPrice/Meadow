@@ -5,6 +5,10 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
+/**
+ * @brief Wrapper class for the Vulkan Instance
+ * 
+ */
 class Instance {
     VkInstance instance;
     VkDebugUtilsMessengerEXT debug_messenger;

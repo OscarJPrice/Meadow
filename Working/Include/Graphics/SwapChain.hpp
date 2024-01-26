@@ -7,13 +7,20 @@
 #include "QueueUtils.hpp"
 
 
-
+/**
+ * @brief Struct containing information about the swap chain
+ * 
+ */
 struct SwapChainSupportDetails {
     VkSurfaceCapabilitiesKHR capabilities;
     std::vector<VkSurfaceFormatKHR> formats;
     std::vector<VkPresentModeKHR> present_modes;
 };
 
+/**
+ * @brief Class for managing the swap chain
+ * 
+ */
 class SwapChain {
     VkSwapchainKHR swapChain;
     VkDevice logical_device;

@@ -3,7 +3,10 @@
 
 #include <GLFW/glfw3.h>
 
-
+/**
+ * @brief Wrapper class for the GLFW window
+ * 
+ */
 class Window {
     GLFWwindow* window;
 
