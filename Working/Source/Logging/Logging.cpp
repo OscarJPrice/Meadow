@@ -7,6 +7,7 @@ std::ofstream Log::verbose;
 std::ofstream Log::info;
 std::ofstream Log::warning;
 std::ofstream Log::error;
+std::ofstream Log::unexpected;
 
 void Log::init() {
     if (!initialized) {

@@ -1,10 +1,10 @@
 #include <iostream>
 #include "Geometry.hpp"
-#include "Graphics.hpp"
+#include "Application.hpp"
 
 int main(){
 	try {
-		GraphicsWindow window(800, 600, "Testing");
+		Application app(800, 600, "Vulkan");
 	} catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}

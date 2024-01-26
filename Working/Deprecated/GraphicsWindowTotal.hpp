@@ -8,10 +8,10 @@
 #include <optional>
 
 /**
- * @class GraphicsWindow
+ * @class GraphicsWindowTotal
  * @brief Represents a graphics window for rendering graphics using Vulkan.
  */
-class GraphicsWindow {
+class GraphicsWindowTotal {
     GLFWwindow* window;
     VkInstance instance;
     VkDebugUtilsMessengerEXT debug_messenger;
@@ -25,13 +25,6 @@ class GraphicsWindow {
         "VK_LAYER_KHRONOS_validation"
     };
 
-    const std::vector<const char*> device_extensions {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-    #ifdef __APPLE__
-        "VK_KHR_portability_subset",
-    #endif
-    };
-
     // Enable validation layers only in debug mode
 #ifndef NDEBUG
     const bool ENABLE_VALIDATION_LAYERS = true;
@@ -40,8 +33,8 @@ class GraphicsWindow {
 #endif
 
 public:
-    GraphicsWindow(uint32_t width, uint32_t height, const char* name);
-    ~GraphicsWindow();
+    GraphicsWindowTotal(uint32_t width, uint32_t height, const char* name);
+    ~GraphicsWindowTotal();
 
 private:
     struct QueueFamilyIndices {

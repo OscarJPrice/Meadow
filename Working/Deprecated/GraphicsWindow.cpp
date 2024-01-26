@@ -1,4 +1,4 @@
-#include "Graphics/GraphicsWindow.hpp"
+#include "GraphicsWindowTotal.hpp"
 #include <Logging/Logging.hpp>
 #include <cstring>
 #include "ansi.h"
@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////
 /**
  * @brief Creates a debug utils messenger extension.
- *
+ * 
  * This function creates a debug utils messenger extension using the provided parameters.
  *
  * @param instance The Vulkan instance.
@@ -62,16 +62,16 @@ VkResult destroyDebugUtilsMessengerExtension(
 
 
 /////////////////////////////////////////////////////////
-// The following code is for the GraphicsWindow class. //
+// The following code is for the GraphicsWindowTotal class. //
 /////////////////////////////////////////////////////////
 /**
- * @brief Constructs a GraphicsWindow object with the specified width, height, and name.
+ * @brief Constructs a GraphicsWindowTotal object with the specified width, height, and name.
  *
  * @param width The width of the graphics window.
  * @param height The height of the graphics window.
  * @param name The name of the graphics window.
  */
-GraphicsWindow::GraphicsWindow(uint32_t width, uint32_t height, const char* name) {
+GraphicsWindowTotal::GraphicsWindowTotal(uint32_t width, uint32_t height, const char* name) {
     Log::init();
 	initializeWindow(width, height, name);
     initializeGraphicsENV(name);
@@ -79,13 +79,13 @@ GraphicsWindow::GraphicsWindow(uint32_t width, uint32_t height, const char* name
 }
 
 /**
- * @brief Destructor for the GraphicsWindow class.
+ * @brief Destructor for the GraphicsWindowTotal class.
  * 
- * This destructor is responsible for cleaning up the resources used by the GraphicsWindow object.
+ * This destructor is responsible for cleaning up the resources used by the GraphicsWindowTotal object.
  * It destroys the Vulkan instance, the GLFW window, and terminates the GLFW library.
  * If validation layers are enabled, it also destroys the debug messenger extension.
  */
-GraphicsWindow::~GraphicsWindow() {
+GraphicsWindowTotal::~GraphicsWindowTotal() {
 	if (ENABLE_VALIDATION_LAYERS) {
 		destroyDebugUtilsMessengerExtension(instance, nullptr, debug_messenger);
 	}
@@ -105,7 +105,7 @@ GraphicsWindow::~GraphicsWindow() {
  * Runs the graphics window event loop.
  * This function continuously polls for events until the window is closed.
  */
-void GraphicsWindow::run() {
+void GraphicsWindowTotal::run() {
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
     }
@@ -121,7 +121,7 @@ void GraphicsWindow::run() {
  * 
  * @throws std::runtime_error if the instance creation fails.
  */
-void GraphicsWindow::createVulkanInstance(const char* name) {
+void GraphicsWindowTotal::createVulkanInstance(const char* name) {
 
     VkApplicationInfo app_info{
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -173,7 +173,7 @@ void GraphicsWindow::createVulkanInstance(const char* name) {
  * @param width The width of the window.
  * @param height The height of the window.
  */
-void GraphicsWindow::initializeWindow(uint32_t width, uint32_t height, const char* name) {
+void GraphicsWindowTotal::initializeWindow(uint32_t width, uint32_t height, const char* name) {
     glfwInit();
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -187,7 +187,7 @@ void GraphicsWindow::initializeWindow(uint32_t width, uint32_t height, const cha
  * 
  * This function creates a Vulkan instance, sets up the debug callback system, and picks the physical device.
  */
-void GraphicsWindow::initializeGraphicsENV(const char* name) {
+void GraphicsWindowTotal::initializeGraphicsENV(const char* name) {
     createVulkanInstance(name);
 	setupDebugCallbackSys();
 	createSurface();
@@ -203,7 +203,7 @@ void GraphicsWindow::initializeGraphicsENV(const char* name) {
  * @param device The physical device to evaluate.
  * @return The suitability score of the device.
  */
-uint32_t GraphicsWindow::rateDeviceSuitability(VkPhysicalDevice device) {
+uint32_t GraphicsWindowTotal::rateDeviceSuitability(VkPhysicalDevice device) {
 	VkPhysicalDeviceProperties device_properties;
 	VkPhysicalDeviceFeatures device_features;
 	
@@ -230,8 +230,8 @@ uint32_t GraphicsWindow::rateDeviceSuitability(VkPhysicalDevice device) {
  * @param device The Vulkan physical device to check.
  * @return True if the device is suitable, false otherwise.
  */
-bool GraphicsWindow::isDeviceSuitable(VkPhysicalDevice device) {
-	QueueFamilyIndices indices = GraphicsWindow::findQueueFamilies(device);
+bool GraphicsWindowTotal::isDeviceSuitable(VkPhysicalDevice device) {
+	QueueFamilyIndices indices = GraphicsWindowTotal::findQueueFamilies(device);
 
 	bool extensions_supported = checkDeviceExtensionSupport(device);
 
@@ -250,7 +250,7 @@ bool GraphicsWindow::isDeviceSuitable(VkPhysicalDevice device) {
  * @param device The Vulkan physical device to check.
  * @return True if the device supports the required extensions, false otherwise.
  */
-bool GraphicsWindow::checkDeviceExtensionSupport(VkPhysicalDevice device)
+bool GraphicsWindowTotal::checkDeviceExtensionSupport(VkPhysicalDevice device)
 {
     uint32_t extension_count;
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
@@ -281,7 +281,7 @@ bool GraphicsWindow::checkDeviceExtensionSupport(VkPhysicalDevice device)
 /**
  * @brief Structure to store queue family indices for a graphics window.
  */
-GraphicsWindow::QueueFamilyIndices GraphicsWindow::findQueueFamilies(VkPhysicalDevice device) {
+GraphicsWindowTotal::QueueFamilyIndices GraphicsWindowTotal::findQueueFamilies(VkPhysicalDevice device) {
 	QueueFamilyIndices indices{};
 	{
 		uint32_t queue_family_count = 0;
@@ -314,7 +314,7 @@ GraphicsWindow::QueueFamilyIndices GraphicsWindow::findQueueFamilies(VkPhysicalD
  * @param device The Vulkan physical device to query.
  * @return The swap chain support details.
  */
-GraphicsWindow::SwapChainSupportDetails GraphicsWindow::querySwapChainSupport(VkPhysicalDevice device) {
+GraphicsWindowTotal::SwapChainSupportDetails GraphicsWindowTotal::querySwapChainSupport(VkPhysicalDevice device) {
 	SwapChainSupportDetails details;
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
 
@@ -366,7 +366,7 @@ VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>
  * @param available_present_modes A vector of available present modes.
  * @return VkPresentModeKHR The chosen present mode.
  */
-VkPresentModeKHR GraphicsWindow::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& available_present_modes) {
+VkPresentModeKHR GraphicsWindowTotal::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& available_present_modes) {
 	VkPresentModeKHR best_mode = VK_PRESENT_MODE_FIFO_KHR;
 	for (const auto& mode : available_present_modes) {
 		if (mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
@@ -387,7 +387,7 @@ VkPresentModeKHR GraphicsWindow::chooseSwapPresentMode(const std::vector<VkPrese
  * @param capabilities The swap chain capabilities.
  * @return VkExtent2D The chosen swap chain extent.
  */
-VkExtent2D GraphicsWindow::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
+VkExtent2D GraphicsWindowTotal::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
 	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
 		return capabilities.currentExtent;
 	}
@@ -412,7 +412,7 @@ VkExtent2D GraphicsWindow::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capa
 	}
 }
 
-void GraphicsWindow::createSwapChain() {
+void GraphicsWindowTotal::createSwapChain() {
 	SwapChainSupportDetails swap_chain_support = querySwapChainSupport(physical_device);
 
 	VkSurfaceFormatKHR surface_format = chooseSwapSurfaceFormat(swap_chain_support.formats);
@@ -439,7 +439,7 @@ void GraphicsWindow::createSwapChain() {
 
 }
 
-void GraphicsWindow::createSurface() {
+void GraphicsWindowTotal::createSurface() {
 	if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create window surface!");
 	}
@@ -452,7 +452,7 @@ void GraphicsWindow::createSurface() {
  * The device with the highest score is selected as the best device.
  * If no suitable device is found, an exception is thrown.
  */
-void GraphicsWindow::pickPhysicalDevice() {
+void GraphicsWindowTotal::pickPhysicalDevice() {
 	uint32_t count;
 	vkEnumeratePhysicalDevices(instance, &count, nullptr);
 
@@ -469,11 +469,11 @@ void GraphicsWindow::pickPhysicalDevice() {
 	for (const auto& device : devices) {
 		uint32_t score = rateDeviceSuitability(device);
 		if (score > highest_score) {
-			if (isDeviceSuitable(device)) {
+			if (device != VK_NULL_HANDLE && isDeviceSuitable(device)) {
 				best_device = device;
 				highest_score = score;
 			}
-			else if (!isDeviceSuitable(best_device)) {
+			else if (best_device != VK_NULL_HANDLE && !isDeviceSuitable(best_device)) {
 				best_device = device;
 				highest_score = score;
 			}
@@ -494,7 +494,7 @@ void GraphicsWindow::pickPhysicalDevice() {
  * It populates the create info structure for the debug messenger and creates the debug messenger.
  * If the creation of the debug messenger fails, it throws a runtime error.
  */
-void GraphicsWindow::setupDebugCallbackSys() {
+void GraphicsWindowTotal::setupDebugCallbackSys() {
 	if (!ENABLE_VALIDATION_LAYERS) return;
 
 	VkDebugUtilsMessengerCreateInfoEXT create_info;
@@ -511,7 +511,7 @@ void GraphicsWindow::setupDebugCallbackSys() {
  * 
  * @param create_info The VkDebugUtilsMessengerCreateInfoEXT structure to be populated.
  */
-void GraphicsWindow::debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& create_info) {
+void GraphicsWindowTotal::debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& create_info) {
 	create_info = {};
 	create_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 	create_info.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT 
@@ -528,7 +528,7 @@ void GraphicsWindow::debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreat
 /**
  * Creates the logical device for the graphics window.
  */
-void GraphicsWindow::createLogicalDevice() {
+void GraphicsWindowTotal::createLogicalDevice() {
 	QueueFamilyIndices indices = findQueueFamilies(physical_device);
 
 	std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
@@ -581,7 +581,7 @@ void GraphicsWindow::createLogicalDevice() {
  * @param extensions A vector of extension names to check for support.
  * @return True if all extensions are supported, false otherwise.
  */
-bool GraphicsWindow::checkExtensionsSupport(std::vector<const char*> extensions) {
+bool GraphicsWindowTotal::checkExtensionsSupport(std::vector<const char*> extensions) {
     std::vector<VkExtensionProperties> available_extensions;
     {
         uint32_t extension_count = 0;
@@ -615,7 +615,7 @@ bool GraphicsWindow::checkExtensionsSupport(std::vector<const char*> extensions)
  * 
  * @return std::vector<const char*> A vector of const char* containing the required extensions.
  */
-std::vector<const char*> GraphicsWindow::getInstanceRequiredExtensions() {
+std::vector<const char*> GraphicsWindowTotal::getInstanceRequiredExtensions() {
     uint32_t glfw_extension_count;
     const char** glfw_extensions =
         glfwGetRequiredInstanceExtensions(&glfw_extension_count);
@@ -637,7 +637,7 @@ std::vector<const char*> GraphicsWindow::getInstanceRequiredExtensions() {
  * 
  * @return true if all validation layers are supported, false otherwise.
  */
-bool GraphicsWindow::checkValidationLayerSupport()
+bool GraphicsWindowTotal::checkValidationLayerSupport()
 {
 
     std::vector<VkLayerProperties> available_layers;
@@ -664,7 +664,7 @@ bool GraphicsWindow::checkValidationLayerSupport()
 
 
 /**
- * @brief Debug callback function for the GraphicsWindow class.
+ * @brief Debug callback function for the GraphicsWindowTotal class.
  *
  * This function is called when a Vulkan debug message is generated. 
  * It provides information about the severity, type, and content of the message.
@@ -675,7 +675,7 @@ bool GraphicsWindow::checkValidationLayerSupport()
  * @param p_user_data A pointer to user-defined data.
  * @return VkBool32 Returns a boolean value indicating whether the debug message should be handled by the application.
  */
-VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsWindow::debugCallback(
+VKAPI_ATTR VkBool32 VKAPI_CALL GraphicsWindowTotal::debugCallback(
 	VkDebugUtilsMessageSeverityFlagBitsEXT message_severity, 
 	VkDebugUtilsMessageTypeFlagsEXT message_type, 
 	const VkDebugUtilsMessengerCallbackDataEXT *p_callback_data, 

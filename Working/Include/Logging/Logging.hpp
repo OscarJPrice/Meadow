@@ -12,6 +12,7 @@ public:
     static std::ofstream info;
     static std::ofstream warning;
     static std::ofstream error;
+    static std::ofstream unexpected;
 };
 
 #endif
