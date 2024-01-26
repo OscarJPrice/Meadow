@@ -4,7 +4,7 @@
 #include "Graphics/Instance.hpp"
 #include "Logging/Logging.hpp"
 #include "ansi.h"
-#include "Graphics/DebugConstants.hpp"
+#include "Graphics/Constants.hpp"
 
 
 Instance::Instance(const char* name) {
@@ -36,12 +36,12 @@ Instance::Instance(const char* name) {
         }
 
         if (!checkValidationLayerSupport()) {
-            throw std::runtime_error("validation layers requested, but not available!");
+            throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "Instance.cpp " ANSI_NORMAL"validation layers requested, but not available!");
         }
 
         std::vector<const char*> extensions = getRequiredExtensions();
         if (!checkExtensionsSupport(extensions)) {
-            throw std::runtime_error("not all extensions found!");
+            throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "Instance.cpp " ANSI_NORMAL "not all extensions found!");
         }
 
         #ifdef __APPLE__
@@ -54,7 +54,7 @@ Instance::Instance(const char* name) {
 
         auto result = vkCreateInstance(&create_info, nullptr, &instance);
         if (result != VK_SUCCESS) {
-            throw std::runtime_error("failed to create instance!");
+            throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "Instance.cpp " ANSI_NORMAL "failed to create instance!");
         }
     }
     {
@@ -64,7 +64,7 @@ Instance::Instance(const char* name) {
         debugMessengerPopulateCreateInfo(create_info);
 
         if (createDebugUtilsMessengerExtension(instance, &create_info, nullptr, &debug_messenger) != VK_SUCCESS) {
-            throw std::runtime_error("failed to set up debug callback!");
+            throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "Instance.cpp " ANSI_NORMAL "failed to set up debug callback!");
         }
     }
 }

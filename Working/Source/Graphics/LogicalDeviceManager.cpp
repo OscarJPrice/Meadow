@@ -2,15 +2,15 @@
 #include "Graphics/LogicalDeviceManager.hpp"
 #include "Graphics/QueueUtils.hpp"
 #include "Graphics/Instance.hpp"
-#include "Graphics/DebugConstants.hpp"
-#include <iostream>
+#include "Graphics/Constants.hpp"
+#include "ansi.h"
 
 LogicalDeviceManager::LogicalDeviceManager(VkPhysicalDevice physical_device, VkSurfaceKHR surface) {
 	
-	QueueFamilyIndices indices = findQueueFamilies(physical_device, surface);
+	QueueUtils::QueueFamilyIndices indices = QueueUtils::findQueueFamilies(physical_device, surface);
 
 	if (!indices.isComplete()) {
-		throw std::runtime_error("failed to find queue families!");
+		throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "LogicalDeviceManager.cpp " ANSI_NORMAL "failed to find queue families!");
 	}
 
 	std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
@@ -51,7 +51,7 @@ LogicalDeviceManager::LogicalDeviceManager(VkPhysicalDevice physical_device, VkS
 	}
 
 	if (vkCreateDevice(physical_device, &create_info, nullptr, &device) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create logical device!");
+		throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "LogicalDeviceManager.cpp " ANSI_NORMAL "failed to create logical device!");
 	}
 
 	vkGetDeviceQueue(device, indices.graphics_family.value(), 0, &present_queue);

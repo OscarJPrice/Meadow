@@ -1,6 +1,6 @@
 #include "Graphics/QueueUtils.hpp"
 #include <vector>
-QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
+QueueUtils::QueueFamilyIndices QueueUtils::findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
 	QueueFamilyIndices indices{};
 	{
 		uint32_t queue_family_count = 0;

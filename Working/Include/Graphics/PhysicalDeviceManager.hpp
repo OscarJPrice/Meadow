@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.h>
 #include "QueueUtils.hpp"
-
+#include "Graphics/SwapChain.hpp"
 class PhysicalDeviceManager {
     VkPhysicalDevice device = VK_NULL_HANDLE;
 
@@ -19,7 +19,13 @@ public:
 private:
     bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface);
 
-    uint32_t rateDeviceSuitability(VkPhysicalDevice device);
+    static uint32_t rateDeviceSuitability(VkPhysicalDevice device);
+
+    static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+
+public:
+
+    static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
 
 };
 
