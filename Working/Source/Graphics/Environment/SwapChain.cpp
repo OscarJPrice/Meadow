@@ -1,5 +1,5 @@
-#include "Graphics/SwapChain.hpp"
-#include "Graphics/PhysicalDeviceManager.hpp"
+#include "Graphics/Environment/SwapChain.hpp"
+#include "Graphics/Environment/PhysicalDeviceManager.hpp"
 #include "ansi.h"
 #include "Logging/Logging.hpp"
 

@@ -2,10 +2,10 @@
 #include <stdexcept>
 #include <iostream>
 #include <set>
-#include "Graphics/PhysicalDeviceManager.hpp"
-#include "Graphics/QueueUtils.hpp"
+#include "Graphics/Environment/PhysicalDeviceManager.hpp"
+#include "Graphics/Environment/QueueUtils.hpp"
+#include "Graphics/Environment/Constants.hpp"
 #include "ansi.h"
-#include "Graphics/Constants.hpp"
 #include "Logging/Logging.hpp"
 
 /**

@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.h>
 #include "QueueUtils.hpp"
-#include "Graphics/SwapChain.hpp"
+#include "SwapChain.hpp"
 
 
 /**

@@ -1,10 +1,10 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 #include <iostream>
-#include "Graphics/Instance.hpp"
+#include "Graphics/Environment/Instance.hpp"
 #include "Logging/Logging.hpp"
 #include "ansi.h"
-#include "Graphics/Constants.hpp"
+#include "Graphics/Environment/Constants.hpp"
 
 
 /**
@@ -234,7 +234,7 @@ VkResult Instance::createDebugUtilsMessengerExtension(
     const VkInstance& instance, 
     const VkDebugUtilsMessengerCreateInfoEXT* create_info,
     const VkAllocationCallbacks* allocator,
-    VkDebugUtilsMessengerEXT debug_messenger
+    VkDebugUtilsMessengerEXT& debug_messenger
 ) {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) 
         vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
@@ -242,7 +242,6 @@ VkResult Instance::createDebugUtilsMessengerExtension(
     if (func) {
         // Call the function to create the debug utils messenger extension
         return func(instance, create_info, allocator, &debug_messenger);
-        return VK_SUCCESS;
     } 
     else {
         // Return an error if the extension is not present
@@ -261,7 +260,7 @@ VkResult Instance::createDebugUtilsMessengerExtension(
 VkResult Instance::destroyDebugUtilsMessengerExtension(
     const VkInstance& instance, 
     const VkAllocationCallbacks* allocator,
-    VkDebugUtilsMessengerEXT debug_messenger
+    VkDebugUtilsMessengerEXT& debug_messenger 
 ) {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func) {

@@ -1,12 +1,7 @@
 #ifndef MEADOW_APPLICATION_INCLUDE_H
 #define MEADOW_APPLICATION_INCLUDE_H
 
-#include "Graphics/Window.hpp"
-#include "Graphics/Instance.hpp"
-#include "Graphics/Surface.hpp"
-#include "Graphics/PhysicalDeviceManager.hpp"
-#include "Graphics/LogicalDeviceManager.hpp"
-#include "Graphics/SwapChain.hpp"
+#include "Graphics/Environment.hpp"
 
 /**
  * @brief Main application class
@@ -19,6 +14,7 @@ class Application {
     PhysicalDeviceManager physical_device;
     LogicalDeviceManager logical_device;
     SwapChain swap_chain;
+    ImageView image_view;
 
 public:
     Application(uint32_t width, uint32_t height, const char* name);

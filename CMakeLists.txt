@@ -9,6 +9,7 @@ find_package(Vulkan REQUIRED)
 
 include_directories(./Working/Include)
 include_directories(./Working/Include/Graphics)
+include_directories("./Working/Include/Graphics/Environment")
 include_directories(./Working/Include/Logging)
 
 if(WIN32)
@@ -27,6 +28,7 @@ endif()
 
 aux_source_directory(./Working/Source SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics SOURCE_FILES)
+aux_source_directory(./Working/Source/Graphics/Environment SOURCE_FILES)
 aux_source_directory(./Working/Source/Logging SOURCE_FILES)
 add_executable(Meadow ${SOURCE_FILES})
 

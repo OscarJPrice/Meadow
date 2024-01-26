@@ -1,8 +1,8 @@
 #include <set>
-#include "Graphics/LogicalDeviceManager.hpp"
-#include "Graphics/QueueUtils.hpp"
-#include "Graphics/Instance.hpp"
-#include "Graphics/Constants.hpp"
+#include "Graphics/Environment/LogicalDeviceManager.hpp"
+#include "Graphics/Environment/QueueUtils.hpp"
+#include "Graphics/Environment/Instance.hpp"
+#include "Graphics/Environment/Constants.hpp"
 #include "ansi.h"
 
 /**

@@ -43,13 +43,13 @@ private:
         const VkInstance& instance, 
         const VkDebugUtilsMessengerCreateInfoEXT* create_info, 
         const VkAllocationCallbacks* allocator, 
-        VkDebugUtilsMessengerEXT debug_messenger
+        VkDebugUtilsMessengerEXT& debug_messenger
     );
 
     VkResult destroyDebugUtilsMessengerExtension(
         const VkInstance& instance, 
         const VkAllocationCallbacks* allocator,
-        VkDebugUtilsMessengerEXT debug_messenger 
+        VkDebugUtilsMessengerEXT& debug_messenger 
     );
 
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -58,8 +58,6 @@ private:
         const VkDebugUtilsMessengerCallbackDataEXT *p_callback_data, 
         void *p_user_data
     );
-
-
 };
 
 #endif // !INSTANCE_HPP
