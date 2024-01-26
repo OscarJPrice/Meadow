@@ -17,14 +17,15 @@
  * @param physical_device The Vulkan physical device.
  * @param surface The Vulkan surface.
  */
-LogicalDeviceManager::LogicalDeviceManager(VkPhysicalDevice physical_device, VkSurfaceKHR surface) {
+LogicalDeviceManager::LogicalDeviceManager(VkPhysicalDevice& physical_device, VkSurfaceKHR& surface) {
 
 	// Find the queue families supported by the physical device for graphics and presentation
 	QueueUtils::QueueFamilyIndices indices = QueueUtils::findQueueFamilies(physical_device, surface);
 
 	// Throw an error if the required queue families are not found
 	if (!indices.isComplete()) {
-		throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "LogicalDeviceManager.cpp " ANSI_NORMAL "failed to find queue families!");
+		throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT 
+			"LogicalDeviceManager.cpp " ANSI_NORMAL "failed to find queue families!");
 	}
 
 	// Create a set of unique queue families

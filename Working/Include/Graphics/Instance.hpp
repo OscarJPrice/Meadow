@@ -24,6 +24,10 @@ public:
         return instance;
     }
 
+    inline operator VkInstance&() {
+        return instance;
+    }
+
 private:
     std::vector<const char*> getRequiredExtensions();
 
@@ -36,14 +40,14 @@ private:
     void debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& create_info);
 
     VkResult createDebugUtilsMessengerExtension(
-        VkInstance instance, 
+        const VkInstance& instance, 
         const VkDebugUtilsMessengerCreateInfoEXT* create_info, 
         const VkAllocationCallbacks* allocator, 
-        VkDebugUtilsMessengerEXT* debug_messenger
+        VkDebugUtilsMessengerEXT debug_messenger
     );
 
     VkResult destroyDebugUtilsMessengerExtension(
-        VkInstance instance, 
+        const VkInstance& instance, 
         const VkAllocationCallbacks* allocator,
         VkDebugUtilsMessengerEXT debug_messenger 
     );

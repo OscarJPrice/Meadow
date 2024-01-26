@@ -14,24 +14,24 @@ class PhysicalDeviceManager {
     VkPhysicalDevice device = VK_NULL_HANDLE;
 
 public:
-    PhysicalDeviceManager(VkInstance instance, VkSurfaceKHR surface);
+    PhysicalDeviceManager(const VkInstance& instance, const VkSurfaceKHR& surface);
 
     ~PhysicalDeviceManager() = default;
 
-    inline operator VkPhysicalDevice() {
+    inline operator VkPhysicalDevice&() {
         return device;
     }
 
 private:
-    bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface);
+    bool isDeviceSuitable(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 
-    static uint32_t rateDeviceSuitability(VkPhysicalDevice device);
+    static uint32_t rateDeviceSuitability(const VkPhysicalDevice& device);
 
-    static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+    static bool checkDeviceExtensionSupport(const VkPhysicalDevice& device);
 
 public:
 
-    static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
+    static SwapChainSupportDetails querySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 
 };
 

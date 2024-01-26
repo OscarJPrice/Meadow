@@ -22,16 +22,31 @@ struct SwapChainSupportDetails {
  * 
  */
 class SwapChain {
-    VkSwapchainKHR swapChain;
-    VkDevice logical_device;
+    VkSwapchainKHR swap_chain;
+    const VkDevice& logical_device;
+    std::vector<VkImage> swap_chain_images;
+    VkFormat swap_chain_image_format;
+    VkExtent2D swap_chain_extent;
 
 
 public:
 
-    SwapChain(GLFWwindow* window, VkPhysicalDevice physical_device, 
-        VkDevice logical_device, VkSurfaceKHR surface);
+    SwapChain(GLFWwindow* window, const VkPhysicalDevice& physical_device, 
+        const VkDevice& logical_device, const VkSurfaceKHR& surface);
 
     ~SwapChain();
+
+    inline operator VkSwapchainKHR() { return swap_chain; }
+
+    inline operator VkSwapchainKHR&() { return swap_chain; }
+
+    inline operator VkFormat() { return swap_chain_image_format; }
+
+    inline operator VkFormat&() { return swap_chain_image_format; }
+
+    inline operator VkExtent2D() { return swap_chain_extent; }
+
+    inline operator VkExtent2D&() { return swap_chain_extent; }
 
 private:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& available_formats);

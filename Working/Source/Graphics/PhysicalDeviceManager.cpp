@@ -18,7 +18,9 @@
  * @param instance The Vulkan instance.
  * @param surface The Vulkan surface.
  */
-PhysicalDeviceManager::PhysicalDeviceManager(VkInstance instance, VkSurfaceKHR surface) {
+PhysicalDeviceManager::PhysicalDeviceManager(const VkInstance& instance, 
+	const VkSurfaceKHR& surface) 
+{
 	// Enumerate the available physical devices
 	uint32_t count;
 	vkEnumeratePhysicalDevices(instance, &count, nullptr);
@@ -66,7 +68,9 @@ PhysicalDeviceManager::PhysicalDeviceManager(VkInstance instance, VkSurfaceKHR s
  * @param device The Vulkan physical device to check.
  * @return True if the device is suitable, false otherwise.
  */
-bool PhysicalDeviceManager::isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface) {
+bool PhysicalDeviceManager::isDeviceSuitable(const VkPhysicalDevice& device, 
+	const VkSurfaceKHR& surface) 
+{
 	// Check if the device is suitable for rendering graphics on the graphics window
 	QueueUtils::QueueFamilyIndices indices = QueueUtils::findQueueFamilies(device, surface);
 	bool extensions_supported = checkDeviceExtensionSupport(device);
@@ -87,7 +91,7 @@ bool PhysicalDeviceManager::isDeviceSuitable(VkPhysicalDevice device, VkSurfaceK
  * @param device The Vulkan physical device to rate.
  * @return The score of the device.
  */
-uint32_t PhysicalDeviceManager::rateDeviceSuitability(VkPhysicalDevice device) {
+uint32_t PhysicalDeviceManager::rateDeviceSuitability(const VkPhysicalDevice& device) {
 	VkPhysicalDeviceProperties device_properties;
 	VkPhysicalDeviceFeatures device_features;
 	
@@ -115,7 +119,7 @@ uint32_t PhysicalDeviceManager::rateDeviceSuitability(VkPhysicalDevice device) {
  * @param device The Vulkan physical device to check.
  * @return True if the device supports the required extensions, false otherwise.
  */
-bool PhysicalDeviceManager::checkDeviceExtensionSupport(VkPhysicalDevice device) {
+bool PhysicalDeviceManager::checkDeviceExtensionSupport(const VkPhysicalDevice& device) {
 	// Enumerate the available device extensions
 	uint32_t extension_count;
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
@@ -155,7 +159,9 @@ bool PhysicalDeviceManager::checkDeviceExtensionSupport(VkPhysicalDevice device)
  * @param surface The Vulkan surface.
  * @return The swap chain support details of the device.
  */
-SwapChainSupportDetails PhysicalDeviceManager::querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
+SwapChainSupportDetails PhysicalDeviceManager::querySwapChainSupport(
+	const VkPhysicalDevice& device, const VkSurfaceKHR& surface) 
+{
 
 	// Query the surface capabilities of the physical device
 	SwapChainSupportDetails details;

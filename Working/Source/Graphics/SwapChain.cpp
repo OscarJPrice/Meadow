@@ -14,16 +14,16 @@
  * @param logical_device The Vulkan logical device.
  * @param surface The Vulkan surface.
  */
-SwapChain::SwapChain(GLFWwindow* window, VkPhysicalDevice physical_device, 
-VkDevice logical_device, VkSurfaceKHR surface) {
-
-    this->logical_device = logical_device;
+SwapChain::SwapChain(GLFWwindow* window, const VkPhysicalDevice& physical_device, 
+const VkDevice& logical_device, const VkSurfaceKHR& surface) : logical_device(logical_device) {
 
     // Query swap chain support details
     SwapChainSupportDetails swap_chain_support = PhysicalDeviceManager::querySwapChainSupport(physical_device, surface);
 
     // Choose the surface format and present mode
     VkSurfaceFormatKHR surface_format = chooseSwapSurfaceFormat(swap_chain_support.formats);
+    swap_chain_image_format = surface_format.format;
+
     VkPresentModeKHR present_mode = chooseSwapPresentMode(swap_chain_support.present_modes);
 
     // Determine the number of images in the swap chain
@@ -33,6 +33,8 @@ VkDevice logical_device, VkSurfaceKHR surface) {
         image_count = swap_chain_support.capabilities.maxImageCount;
     }
 
+    swap_chain_extent = chooseSwapExtent(window, swap_chain_support.capabilities);
+
     // Create swap chain create info
     VkSwapchainCreateInfoKHR create_info = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
@@ -40,7 +42,7 @@ VkDevice logical_device, VkSurfaceKHR surface) {
         .minImageCount = image_count,
         .imageFormat = surface_format.format,
         .imageColorSpace = surface_format.colorSpace,
-        .imageExtent = chooseSwapExtent(window, swap_chain_support.capabilities),
+        .imageExtent = swap_chain_extent,
         .imageArrayLayers = 1,
         .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
     };
@@ -70,9 +72,13 @@ VkDevice logical_device, VkSurfaceKHR surface) {
     create_info.clipped = VK_TRUE;
 
     // Create the swap chain
-    if (vkCreateSwapchainKHR(logical_device, &create_info, nullptr, &swapChain) != VK_SUCCESS) {
+    if (vkCreateSwapchainKHR(logical_device, &create_info, nullptr, &swap_chain) != VK_SUCCESS) {
         throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "SwapChain.cpp " ANSI_NORMAL "failed to create swap chain!");
     }   
+
+    // Get the swap chain images
+    swap_chain_images.resize(image_count);
+    vkGetSwapchainImagesKHR(logical_device, swap_chain, &image_count, swap_chain_images.data());
 }
 
 /**
@@ -82,7 +88,7 @@ VkDevice logical_device, VkSurfaceKHR surface) {
  *
  */
 SwapChain::~SwapChain() {
-    vkDestroySwapchainKHR(logical_device, swapChain, nullptr);
+    vkDestroySwapchainKHR(logical_device, swap_chain, nullptr);
 }
 
 

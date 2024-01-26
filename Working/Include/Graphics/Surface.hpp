@@ -10,15 +10,19 @@
  */
 class Surface {
     VkSurfaceKHR surface;
-    VkInstance instance;
+    VkInstance& instance;
 
 public:
 
-    Surface(VkInstance instance, GLFWwindow* window);
+    Surface(VkInstance& instance, GLFWwindow* window);
 
     ~Surface();
 
     inline operator VkSurfaceKHR() {
+        return surface;
+    }
+
+    inline operator VkSurfaceKHR&() {
         return surface;
     }
 

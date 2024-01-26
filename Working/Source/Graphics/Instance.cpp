@@ -75,8 +75,9 @@ Instance::Instance(const char* name) {
         VkDebugUtilsMessengerCreateInfoEXT create_info;
         debugMessengerPopulateCreateInfo(create_info);
 
-        if (createDebugUtilsMessengerExtension(instance, &create_info, nullptr, &debug_messenger) != VK_SUCCESS) {
-            throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "Instance.cpp " ANSI_NORMAL "failed to set up debug callback!");
+        if (createDebugUtilsMessengerExtension(instance, &create_info, nullptr, debug_messenger) != VK_SUCCESS) {
+            throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT 
+            "Instance.cpp " ANSI_NORMAL "failed to set up debug callback!");
         }
     }
 }
@@ -230,17 +231,17 @@ void Instance::debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreateInfoE
  * @return VkResult The result of the function call.
  */
 VkResult Instance::createDebugUtilsMessengerExtension(
-    VkInstance instance, 
+    const VkInstance& instance, 
     const VkDebugUtilsMessengerCreateInfoEXT* create_info,
     const VkAllocationCallbacks* allocator,
-    VkDebugUtilsMessengerEXT* debug_messenger
+    VkDebugUtilsMessengerEXT debug_messenger
 ) {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) 
         vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
 
     if (func) {
         // Call the function to create the debug utils messenger extension
-        return func(instance, create_info, allocator, debug_messenger);
+        return func(instance, create_info, allocator, &debug_messenger);
         return VK_SUCCESS;
     } 
     else {
@@ -258,7 +259,7 @@ VkResult Instance::createDebugUtilsMessengerExtension(
  * @return VkResult The result of the operation.
  */
 VkResult Instance::destroyDebugUtilsMessengerExtension(
-    VkInstance instance, 
+    const VkInstance& instance, 
     const VkAllocationCallbacks* allocator,
     VkDebugUtilsMessengerEXT debug_messenger
 ) {
