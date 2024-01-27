@@ -43,13 +43,13 @@ private:
         const VkInstance& instance, 
         const VkDebugUtilsMessengerCreateInfoEXT* create_info, 
         const VkAllocationCallbacks* allocator, 
-        VkDebugUtilsMessengerEXT& debug_messenger
+        VkDebugUtilsMessengerEXT& debug_messenger_arg
     );
 
     VkResult destroyDebugUtilsMessengerExtension(
-        const VkInstance& instance, 
+        const VkInstance& instance_arg, 
         const VkAllocationCallbacks* allocator,
-        VkDebugUtilsMessengerEXT& debug_messenger 
+        VkDebugUtilsMessengerEXT& debug_messenger_arg 
     );
 
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(

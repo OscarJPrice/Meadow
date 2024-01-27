@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Graphics/Environment/SwapChain.hpp"
 #include "Graphics/Environment/PhysicalDeviceManager.hpp"
 #include "ansi.h"

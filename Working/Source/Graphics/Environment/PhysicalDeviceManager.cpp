@@ -36,17 +36,17 @@ PhysicalDeviceManager::PhysicalDeviceManager(const VkInstance& instance,
 	VkPhysicalDevice best_device = VK_NULL_HANDLE;
 
 	// Iterate through each device and rate its suitability
-	for (const auto& device : devices) {
-		uint32_t score = rateDeviceSuitability(device);
+	for (const auto& phsyical_device : devices) {
+		uint32_t score = rateDeviceSuitability(phsyical_device);
 		if (score > highest_score) {
 			// Check if the device is suitable for rendering graphics on the graphics window
-			if (isDeviceSuitable(device, surface)) {
-				best_device = device;
+			if (isDeviceSuitable(phsyical_device, surface)) {
+				best_device = phsyical_device;
 				highest_score = score;
 			}
 			// If the current best device is not suitable, update the best device
 			else if (best_device == VK_NULL_HANDLE || !isDeviceSuitable(best_device, surface)) {
-				best_device = device;
+				best_device = phsyical_device;
 				highest_score = score;
 			}
 		}
@@ -68,17 +68,17 @@ PhysicalDeviceManager::PhysicalDeviceManager(const VkInstance& instance,
  * @param device The Vulkan physical device to check.
  * @return True if the device is suitable, false otherwise.
  */
-bool PhysicalDeviceManager::isDeviceSuitable(const VkPhysicalDevice& device, 
+bool PhysicalDeviceManager::isDeviceSuitable(const VkPhysicalDevice& device_arg, 
 	const VkSurfaceKHR& surface) 
 {
 	// Check if the device is suitable for rendering graphics on the graphics window
-	QueueUtils::QueueFamilyIndices indices = QueueUtils::findQueueFamilies(device, surface);
-	bool extensions_supported = checkDeviceExtensionSupport(device);
+	QueueUtils::QueueFamilyIndices indices = QueueUtils::findQueueFamilies(device_arg, surface);
+	bool extensions_supported = checkDeviceExtensionSupport(device_arg);
 
 	bool swap_chain_adequate = false;
 	if (extensions_supported) {
 		// Query the swap chain support details
-		SwapChainSupportDetails swap_chain_support = querySwapChainSupport(device, surface);
+		SwapChainSupportDetails swap_chain_support = querySwapChainSupport(device_arg, surface);
 		swap_chain_adequate = !swap_chain_support.formats.empty() && !swap_chain_support.present_modes.empty();
 	}
 	// Return true if the device has complete queue families, adequate swap chain support, and supported extensions

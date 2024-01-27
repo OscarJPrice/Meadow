@@ -1,9 +1,11 @@
 #include <set>
+#include <stdexcept>
 #include "Graphics/Environment/LogicalDeviceManager.hpp"
 #include "Graphics/Environment/QueueUtils.hpp"
 #include "Graphics/Environment/Instance.hpp"
 #include "Graphics/Environment/Constants.hpp"
 #include "ansi.h"
+
 
 /**
  * @brief Constructs a LogicalDeviceManager object.
@@ -51,11 +53,11 @@ LogicalDeviceManager::LogicalDeviceManager(VkPhysicalDevice& physical_device, Vk
 	VkPhysicalDeviceFeatures device_features{};
 	VkDeviceCreateInfo create_info {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		.pQueueCreateInfos = queue_create_infos.data(),
 		.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size()),
-		.pEnabledFeatures = &device_features,
+		.pQueueCreateInfos = queue_create_infos.data(),
 		.enabledExtensionCount = static_cast<uint32_t>(device_extensions.size()),
 		.ppEnabledExtensionNames = device_extensions.data(),
+		.pEnabledFeatures = &device_features,
 	};
 
 	// Enable validation layers if in debug mode

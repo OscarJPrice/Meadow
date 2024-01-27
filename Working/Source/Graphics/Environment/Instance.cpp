@@ -72,10 +72,10 @@ Instance::Instance(const char* name) {
 
     // Set up debug callback if in debug mode
     if (DEBUG_MODE) {
-        VkDebugUtilsMessengerCreateInfoEXT create_info;
-        debugMessengerPopulateCreateInfo(create_info);
+        VkDebugUtilsMessengerCreateInfoEXT messenger_debug_create_info;
+        debugMessengerPopulateCreateInfo(messenger_debug_create_info);
 
-        if (createDebugUtilsMessengerExtension(instance, &create_info, nullptr, debug_messenger) != VK_SUCCESS) {
+        if (createDebugUtilsMessengerExtension(instance, &messenger_debug_create_info, nullptr, instance_debug_messenger) != VK_SUCCESS) {
             throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT 
             "Instance.cpp " ANSI_NORMAL "failed to set up debug callback!");
         }
@@ -89,7 +89,7 @@ Instance::Instance(const char* name) {
  */
 Instance::~Instance() {
     if (DEBUG_MODE) {
-        destroyDebugUtilsMessengerExtension(instance, nullptr, debug_messenger);
+        destroyDebugUtilsMessengerExtension(instance, nullptr, instance_debug_messenger);
     }
     vkDestroyInstance(instance, nullptr);
 }
@@ -234,14 +234,19 @@ VkResult Instance::createDebugUtilsMessengerExtension(
     const VkInstance& instance, 
     const VkDebugUtilsMessengerCreateInfoEXT* create_info,
     const VkAllocationCallbacks* allocator,
-    VkDebugUtilsMessengerEXT& debug_messenger
+    VkDebugUtilsMessengerEXT& debug_messenger_arg
 ) {
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4191)
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) 
         vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+#pragma warning(pop)
+#endif
 
     if (func) {
         // Call the function to create the debug utils messenger extension
-        return func(instance, create_info, allocator, &debug_messenger);
+        return func(instance, create_info, allocator, &debug_messenger_arg);
     } 
     else {
         // Return an error if the extension is not present
@@ -258,14 +263,14 @@ VkResult Instance::createDebugUtilsMessengerExtension(
  * @return VkResult The result of the operation.
  */
 VkResult Instance::destroyDebugUtilsMessengerExtension(
-    const VkInstance& instance, 
+    const VkInstance& instance_arg, 
     const VkAllocationCallbacks* allocator,
-    VkDebugUtilsMessengerEXT& debug_messenger 
+    VkDebugUtilsMessengerEXT& debug_messenger_arg 
 ) {
-    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance_arg, "vkDestroyDebugUtilsMessengerEXT");
     if (func) {
         // Call the function to destroy the debug utils messenger extension
-        func(instance, debug_messenger, allocator);
+        func(instance_arg, debug_messenger_arg, allocator);
         return VK_SUCCESS;
     } 
     else {
@@ -293,56 +298,55 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Instance::debugCallback(
 	const VkDebugUtilsMessengerCallbackDataEXT *p_callback_data, 
 	void *p_user_data
 ) {
-// Handle the debug message severity
-VkBool32 result = VK_FALSE;
-std::ofstream* stream; // I would use a reference, but I can't!
-switch (message_severity) {
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-        stream = &Log::verbose;
-        *stream << FAINT "[VERBOSE] " ANSI_NORMAL;
-        break;
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-        stream = &Log::info;
-        *stream << GREEN_FG "[INFO] " ANSI_NORMAL;
-        break;
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-        std::cout<< YELLOW_FG "[WARNING] " ANSI_NORMAL << "Written to Logs/warning.log" << std::endl;
-        stream = &Log::warning;
-        *stream << YELLOW_FG "[WARNING] " ANSI_NORMAL;
-        break;
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-        std::cout << RED_FG_BRIGHT "[ERROR] " ANSI_NORMAL << "Written to Logs/error.log" << std::endl;
-        stream = &Log::error;
-        *stream << RED_FG_BRIGHT "[ERROR] " ANSI_NORMAL;
-        result = VK_TRUE;
-        break;
-    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT:
-        std::cout << MAGENTA_FG_BRIGHT  "[UNKNOWN] " ANSI_NORMAL;
-        stream = &Log::unexpected;
-        *stream << MAGENTA_FG_BRIGHT "[UNKNOWN] " ANSI_NORMAL;
-        break;
-}
-
-// Handle the debug message type
-switch (message_type) {
-    case VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT:
-        *stream << "[GENERAL]: ";
-        break;
-    case VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT:
-        *stream << "[VALIDATION]: ";
-        break;
-    case VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT:
-        *stream << "[PERFORMANCE]: ";
-        break;
-}
-
-// Print the debug message and object names
-*stream << p_callback_data->pMessage << std::endl;
-for (uint32_t i = 0; i < p_callback_data->objectCount; i++) {
-    if (p_callback_data->pObjects[i].pObjectName) {
-        *stream << p_callback_data->pObjects[i].pObjectName << std::endl;
+    // Handle the debug message severity
+    VkBool32 result = VK_FALSE;
+    std::ofstream* stream = &Log::unexpected;
+    switch (message_severity) {
+        case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+            stream = &Log::verbose;
+            *stream << FAINT "[VERBOSE] " ANSI_NORMAL;
+            break;
+        case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+            stream = &Log::info;
+            *stream << GREEN_FG "[INFO] " ANSI_NORMAL;
+            break;
+        case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+            std::cout<< YELLOW_FG "[WARNING] " ANSI_NORMAL << "Written to Logs/warning.log" << std::endl;
+            stream = &Log::warning;
+            *stream << YELLOW_FG "[WARNING] " ANSI_NORMAL;
+            break;
+        case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+            std::cout << RED_FG_BRIGHT "[ERROR] " ANSI_NORMAL << "Written to Logs/error.log" << std::endl;
+            stream = &Log::error;
+            *stream << RED_FG_BRIGHT "[ERROR] " ANSI_NORMAL;
+            result = VK_TRUE;
+            break;
+        case VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT:
+            std::cout << MAGENTA_FG_BRIGHT  "[UNKNOWN] " ANSI_NORMAL;
+            *stream << MAGENTA_FG_BRIGHT "[UNKNOWN] " ANSI_NORMAL;
+            break;
     }
-}
 
-return result;
+    // Handle the debug message type
+    switch (message_type) {
+        case VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT:
+            *stream << "[GENERAL]: ";
+            break;
+        case VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT:
+            *stream << "[VALIDATION]: ";
+            break;
+        case VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT:
+            *stream << "[PERFORMANCE]: ";
+            break;
+    }
+
+    // Print the debug message and object names
+    *stream << p_callback_data->pMessage << std::endl;
+    for (uint32_t i = 0; i < p_callback_data->objectCount; i++) {
+        if (p_callback_data->pObjects[i].pObjectName) {
+            *stream << p_callback_data->pObjects[i].pObjectName << std::endl;
+        }
+    }
+
+    return result;
 }
