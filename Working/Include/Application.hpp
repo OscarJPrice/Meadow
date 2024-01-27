@@ -1,14 +1,7 @@
-#ifndef MEADOW_APPLICATION_INCLUDE_H
-#define MEADOW_APPLICATION_INCLUDE_H
+#include "Graphics/Include.hpp"
 
-#include "Graphics/Environment.hpp"
-
-/**
- * @brief Main application class
- * 
- */
 class Application {
-    Window window;
+    Window window; 
     Instance instance;
     Surface surface;
     PhysicalDeviceManager physical_device;
@@ -23,6 +16,3 @@ public:
 
     void run();
 };
-
-
-#endif // !MEADOW_APPLICATION_INCLUDE_H

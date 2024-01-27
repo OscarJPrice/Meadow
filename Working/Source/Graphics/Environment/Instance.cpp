@@ -75,7 +75,7 @@ Instance::Instance(const char* name) {
         VkDebugUtilsMessengerCreateInfoEXT messenger_debug_create_info;
         debugMessengerPopulateCreateInfo(messenger_debug_create_info);
 
-        if (createDebugUtilsMessengerExtension(instance, &messenger_debug_create_info, nullptr, instance_debug_messenger) != VK_SUCCESS) {
+        if (createDebugUtilsMessengerExtension(instance, &messenger_debug_create_info, nullptr, debug_messenger) != VK_SUCCESS) {
             throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT 
             "Instance.cpp " ANSI_NORMAL "failed to set up debug callback!");
         }
@@ -89,7 +89,7 @@ Instance::Instance(const char* name) {
  */
 Instance::~Instance() {
     if (DEBUG_MODE) {
-        destroyDebugUtilsMessengerExtension(instance, nullptr, instance_debug_messenger);
+        destroyDebugUtilsMessengerExtension(instance, nullptr, debug_messenger);
     }
     vkDestroyInstance(instance, nullptr);
 }
@@ -239,8 +239,10 @@ VkResult Instance::createDebugUtilsMessengerExtension(
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4191)
+#endif
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) 
         vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+#ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
