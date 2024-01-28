@@ -9,6 +9,9 @@
 #include "Environment/SwapChain.hpp"
 #include "Environment/ImageView.hpp"
 #include "Pipeline/Pipeline.hpp"
+#include "Drawing/FrameBuffer.hpp"
+#include "Drawing/CommandPool.hpp"
+#include "Drawing/CommandBuffer.hpp"
 
 
 #endif

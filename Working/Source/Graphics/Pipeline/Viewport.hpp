@@ -9,11 +9,17 @@ class Viewport {
     VkPipelineViewportStateCreateInfo viewport_state_create_info;
 
 public:
-    Viewport(VkExtent2D& extent);
+    Viewport(const VkExtent2D& extent);
 
     ~Viewport() = default;
 
-    inline operator VkViewport&() { return viewport; }
+    inline operator const VkViewport&() { return viewport; }
+
+    inline operator VkViewport*() { return &viewport; }
+
+    inline operator const VkRect2D&() { return scissor; }
+
+    inline operator VkRect2D*() { return &scissor; }
 
     inline operator VkPipelineViewportStateCreateInfo*() { return &viewport_state_create_info; }
 };

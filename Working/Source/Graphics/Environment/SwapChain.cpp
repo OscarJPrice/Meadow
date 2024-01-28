@@ -73,7 +73,7 @@ const VkDevice& logical_device, const VkSurfaceKHR& surface) : logical_device(lo
     create_info.clipped = VK_TRUE;
 
     // Create the swap chain
-    if (vkCreateSwapchainKHR(logical_device, &create_info, nullptr, &swap_chain) != VK_SUCCESS) {
+    if (vkCreateSwapchainKHR(logical_device, &create_info, nullptr, &swap_chain)) {
         throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "SwapChain.cpp " ANSI_NORMAL "failed to create swap chain!");
     }   
 

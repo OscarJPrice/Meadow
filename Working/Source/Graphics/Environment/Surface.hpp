@@ -10,11 +10,11 @@
  */
 class Surface {
     VkSurfaceKHR surface;
-    VkInstance& instance;
+    const VkInstance& instance;
 
 public:
 
-    Surface(VkInstance& instance, GLFWwindow* window);
+    Surface(const VkInstance& instance, GLFWwindow* window);
 
     ~Surface();
 

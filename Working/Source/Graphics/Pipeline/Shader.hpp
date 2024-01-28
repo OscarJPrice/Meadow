@@ -5,9 +5,9 @@
 
 class Shader {
     VkShaderModule shaderModule;
-    VkDevice& device;
+    const VkDevice& device;
 public:
-    Shader(const char* filename, VkDevice& device);
+    Shader(const char* filename, const VkDevice& device);
     ~Shader();
     
     inline operator VkShaderModule&() { return shaderModule; }

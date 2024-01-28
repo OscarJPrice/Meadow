@@ -36,17 +36,19 @@ public:
 
     ~SwapChain();
 
-    inline operator VkSwapchainKHR&() { return swap_chain; }
+    inline operator const VkSwapchainKHR&() { return swap_chain; }
 
-    inline operator VkFormat&() { return swap_chain_image_format; }
+    inline operator VkSwapchainKHR*() { return &swap_chain; }
+
+    inline operator const VkFormat&() const { return swap_chain_image_format; }
 
     inline operator VkExtent2D&() { return swap_chain_extent; }
 
     inline operator std::vector<VkImage>&() { return swap_chain_images; }
 
-    inline VkExtent2D extent() { return swap_chain_extent; }
+    inline const VkExtent2D extent() const { return swap_chain_extent; }
 
-    inline std::vector<VkImage>& images() { return swap_chain_images; }
+    inline const std::vector<VkImage>& images() const { return swap_chain_images; }
 
 private:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& available_formats);

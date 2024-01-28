@@ -1,7 +1,7 @@
 #include "ImageView.hpp"
 #include <stdexcept>
 
-ImageView::ImageView(VkDevice& device, SwapChain& swap_chain)
+ImageView::ImageView(const VkDevice& device, const SwapChain& swap_chain)
     : device(device)//, swap_chain(swap_chain)
 {
     swap_chain_image_views.resize(swap_chain.images().size());
@@ -27,7 +27,7 @@ ImageView::ImageView(VkDevice& device, SwapChain& swap_chain)
             }
         };
         if (vkCreateImageView(device, &image_view_create_info, nullptr, 
-            swap_chain_image_views.data() + i) != VK_SUCCESS) {
+            swap_chain_image_views.data() + i)) {
             throw std::runtime_error("Failed to create image views!");
         }
         i++;

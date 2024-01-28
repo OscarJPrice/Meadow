@@ -25,7 +25,7 @@ namespace QueueUtils {
         }
     };
 
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
+    QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice device, const VkSurfaceKHR surface);
 }
 
 #endif // QUEUE_UTILS_HPP

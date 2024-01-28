@@ -19,7 +19,7 @@
  * @param physical_device The Vulkan physical device.
  * @param surface The Vulkan surface.
  */
-LogicalDeviceManager::LogicalDeviceManager(VkPhysicalDevice& physical_device, VkSurfaceKHR& surface) {
+LogicalDeviceManager::LogicalDeviceManager(const VkPhysicalDevice& physical_device, const VkSurfaceKHR& surface) {
 
 	// Find the queue families supported by the physical device for graphics and presentation
 	QueueUtils::QueueFamilyIndices indices = QueueUtils::findQueueFamilies(physical_device, surface);
@@ -70,7 +70,7 @@ LogicalDeviceManager::LogicalDeviceManager(VkPhysicalDevice& physical_device, Vk
 	}
 
 	// Create the logical device
-	if (vkCreateDevice(physical_device, &create_info, nullptr, &device) != VK_SUCCESS) {
+	if (vkCreateDevice(physical_device, &create_info, nullptr, &device)) {
 		throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "LogicalDeviceManager.cpp " ANSI_NORMAL "failed to create logical device!");
 	}
 

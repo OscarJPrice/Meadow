@@ -1,6 +1,6 @@
 #include "Viewport.hpp"
 
-Viewport::Viewport(VkExtent2D& extent) : 
+Viewport::Viewport(const VkExtent2D& extent) : 
     viewport({
         .x = 0.0f,
         .y = 0.0f,

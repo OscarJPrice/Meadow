@@ -1,8 +1,8 @@
 #include "RenderPass.hpp"
 #include <stdexcept>
-RenderPass::RenderPass(VkDevice& device) : device(device) {
+RenderPass::RenderPass(const VkDevice& device, const VkFormat& format) : device(device) {
     VkAttachmentDescription color_attachment = {
-        .format = VK_FORMAT_B8G8R8A8_UNORM,
+        .format = format,
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -23,15 +23,27 @@ RenderPass::RenderPass(VkDevice& device) : device(device) {
         .pColorAttachments = &color_attachment_reference
     };
 
+    VkSubpassDependency subpass_dependency {
+        .srcSubpass = VK_SUBPASS_EXTERNAL,
+        .dstSubpass = 0,
+        .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .srcAccessMask = 0,
+        .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+    };
+
+
     VkRenderPassCreateInfo render_create_info {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
         .attachmentCount = 1,
         .pAttachments = &color_attachment,
         .subpassCount = 1,
-        .pSubpasses = &subpass_description
+        .pSubpasses = &subpass_description,
+        .dependencyCount = 1,
+        .pDependencies = &subpass_dependency
     };
 
-    if (vkCreateRenderPass(device, &render_create_info, nullptr, &render_pass) != VK_SUCCESS) {
+    if (vkCreateRenderPass(device, &render_create_info, nullptr, &render_pass)) {
         throw std::runtime_error("Failed to create render pass");
     }
 }

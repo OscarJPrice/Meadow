@@ -66,7 +66,7 @@ Instance::Instance(const char* name) {
 
     // Create Vulkan instance
     auto result = vkCreateInstance(&create_info, nullptr, &instance);
-    if (result != VK_SUCCESS) {
+    if (result) {
         throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "Instance.cpp " ANSI_NORMAL "failed to create instance!");
     }
 
@@ -75,7 +75,7 @@ Instance::Instance(const char* name) {
         VkDebugUtilsMessengerCreateInfoEXT messenger_debug_create_info;
         debugMessengerPopulateCreateInfo(messenger_debug_create_info);
 
-        if (createDebugUtilsMessengerExtension(instance, &messenger_debug_create_info, nullptr, debug_messenger) != VK_SUCCESS) {
+        if (createDebugUtilsMessengerExtension(instance, &messenger_debug_create_info, nullptr, debug_messenger)) {
             throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT 
             "Instance.cpp " ANSI_NORMAL "failed to set up debug callback!");
         }

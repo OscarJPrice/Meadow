@@ -5,10 +5,12 @@
 #include "RenderPass.hpp"
 #include "Viewport.hpp"
 
-Pipeline::Pipeline(VkDevice& device, VkExtent2D& swapchain, bool blend) : 
+Pipeline::Pipeline(const VkDevice& device, const SwapChain& swap_chain, bool blend) : 
     device(device),
     vert_shader_module("SPIR-V/Shader.vert.spv", device),
-    frag_shader_module("SPIR-V/Shader.frag.spv", device)
+    frag_shader_module("SPIR-V/Shader.frag.spv", device),
+    viewport(swap_chain.extent()),
+    render_pass(device, swap_chain)
 {
 
     shader_stages[0] = {
@@ -92,12 +94,9 @@ Pipeline::Pipeline(VkDevice& device, VkExtent2D& swapchain, bool blend) :
         .pPushConstantRanges = nullptr
     };
 
-    if (vkCreatePipelineLayout(device, &pipeline_layout_create_info, nullptr, &pipeline_layout) != VK_SUCCESS) {
+    if (vkCreatePipelineLayout(device, &pipeline_layout_create_info, nullptr, &pipeline_layout)) {
         throw std::runtime_error("Failed to create pipeline layout");
     }
-
-    Viewport viewport(swapchain);
-    RenderPass render_pass(device);
 
     VkGraphicsPipelineCreateInfo pipeline_create_info {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -118,7 +117,7 @@ Pipeline::Pipeline(VkDevice& device, VkExtent2D& swapchain, bool blend) :
         .basePipelineIndex = -1
     };
 
-    if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipeline_create_info, nullptr, &pipeline) != VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipeline_create_info, nullptr, &pipeline)) {
         throw std::runtime_error("Failed to create graphics pipeline");
     }
 }

@@ -6,9 +6,9 @@
 class RenderPass {
     VkRenderPass render_pass;
 
-    VkDevice& device;
+    const VkDevice& device;
 public:
-    RenderPass(VkDevice& device);
+    RenderPass(const VkDevice& device, const VkFormat& format);
     ~RenderPass();
 
     inline operator VkRenderPass&() { return render_pass; }

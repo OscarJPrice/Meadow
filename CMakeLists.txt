@@ -36,8 +36,9 @@ add_custom_target(Shaders DEPENDS ${SPIRV_BINARY_FILES})
 
 include_directories(./Working/Source)
 include_directories(./Working/Source/Graphics)
-include_directories("./Working/Source/Graphics/Environment")
-include_directories("./Working/Source/Graphics/Pipeline")
+include_directories(./Working/Source/Graphics/Environment)
+include_directories(./Working/Source/Graphics/Pipeline)
+include_directories(./Working/Source/Graphics/Drawing)
 include_directories(./Working/Source/Logging)
 
 if(WIN32)
@@ -46,7 +47,6 @@ if(WIN32)
 else()
 	find_package(glfw3 REQUIRED)
 	link_libraries(glfw)
-	add_compile_options(-Wpedantic  -Werror  -O2)
 endif()
 
 if(MSVC)
@@ -56,12 +56,16 @@ if(MSVC)
 	add_compile_options(/wd4626) # Disable warning C4626: 'X': assignment operator was implicitly defined as deleted
 	add_compile_options(/wd4514) # Disable warning C4514: 'X': unreferenced inline function has been removed
 	add_compile_options(/wd4100) # Disable warning C4100: 'X': unreferenced formal parameter
+  add_compile_options(/Ox) # Disable warning C4100: 'X': unreferenced formal parameter
+else()
+  add_compile_options(-Wpedantic  -Werror  -O3)
 endif()
 
 aux_source_directory(./Working/Source SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Environment SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Pipeline SOURCE_FILES)
+aux_source_directory(./Working/Source/Graphics/Drawing SOURCE_FILES)
 aux_source_directory(./Working/Source/Logging SOURCE_FILES)
 
 

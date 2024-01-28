@@ -9,7 +9,7 @@
  * @param surface The Vulkan surface.
  * 
  */
-QueueUtils::QueueFamilyIndices QueueUtils::findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
+QueueUtils::QueueFamilyIndices QueueUtils::findQueueFamilies(const VkPhysicalDevice device, const VkSurfaceKHR surface) {
 	
 		QueueFamilyIndices indices{}; // Create an instance of QueueFamilyIndices struct
 

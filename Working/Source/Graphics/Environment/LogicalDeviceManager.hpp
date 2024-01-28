@@ -12,19 +12,15 @@ class LogicalDeviceManager {
     VkQueue present_queue = VK_NULL_HANDLE;
 public:
 
-    LogicalDeviceManager(VkPhysicalDevice& physical_device, VkSurfaceKHR& surface);
+    LogicalDeviceManager(const VkPhysicalDevice& physical_device, const VkSurfaceKHR& surface);
 
     ~LogicalDeviceManager();
 
-    inline operator VkDevice() {
+    inline operator const VkDevice&() const {
         return device;
     }
 
-    inline operator VkDevice&() {
-        return device;
-    }
-
-    inline operator VkQueue() {
+    inline operator VkQueue&() {
         return present_queue;
     }
 

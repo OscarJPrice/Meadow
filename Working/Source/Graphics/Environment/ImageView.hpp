@@ -15,14 +15,16 @@ class ImageView {
 
     std::vector<VkImageView> swap_chain_image_views;
 
-    VkDevice& device;
+    const VkDevice& device;
     //SwapChain& swap_chain;
 
 public:
 
-    ImageView(VkDevice& device, SwapChain& swap_chain);    
+    ImageView(const VkDevice& device, const SwapChain& swap_chain);    
 
     ~ImageView();
+
+    inline operator std::vector<VkImageView>&() { return swap_chain_image_views; }
 
 };
 

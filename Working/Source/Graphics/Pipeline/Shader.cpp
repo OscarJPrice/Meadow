@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <vector>
 
-Shader::Shader(const char* filename, VkDevice& device) : device(device) {
+Shader::Shader(const char* filename, const VkDevice& device) : device(device) {
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
         throw std::runtime_error("Failed to open file");
@@ -17,7 +17,7 @@ Shader::Shader(const char* filename, VkDevice& device) : device(device) {
         .codeSize = code.size(),
         .pCode = reinterpret_cast<const uint32_t*>(code.data())
     };
-    if (vkCreateShaderModule(device, &shader_create_info, nullptr, &shaderModule) != VK_SUCCESS) {
+    if (vkCreateShaderModule(device, &shader_create_info, nullptr, &shaderModule)) {
         throw std::runtime_error("Failed to create shader module");
     }
 }
