@@ -1,10 +1,10 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 #include <iostream>
-#include "Graphics/Environment/Instance.hpp"
-#include "Logging/Logging.hpp"
+#include "Instance.hpp"
+#include "Logging.hpp"
 #include "ansi.h"
-#include "Graphics/Environment/Constants.hpp"
+#include "Constants.hpp"
 
 
 /**

@@ -44,6 +44,8 @@ public:
 
     inline operator std::vector<VkImage>&() { return swap_chain_images; }
 
+    inline VkExtent2D extent() { return swap_chain_extent; }
+
     inline std::vector<VkImage>& images() { return swap_chain_images; }
 
 private:

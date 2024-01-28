@@ -1,4 +1,4 @@
-#include "Logging/Logging.hpp"
+#include "Logging.hpp"
 #include <filesystem>
 
 bool Log::initialized = false;

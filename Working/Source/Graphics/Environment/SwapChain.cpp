@@ -1,8 +1,8 @@
 #include <algorithm>
-#include "Graphics/Environment/SwapChain.hpp"
-#include "Graphics/Environment/PhysicalDeviceManager.hpp"
+#include "SwapChain.hpp"
+#include "PhysicalDeviceManager.hpp"
 #include "ansi.h"
-#include "Logging/Logging.hpp"
+#include "Logging.hpp"
 
 
 /**

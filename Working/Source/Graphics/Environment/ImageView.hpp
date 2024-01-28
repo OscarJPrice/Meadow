@@ -20,7 +20,7 @@ class ImageView {
 
 public:
 
-    ImageView(SwapChain& swap_chain, VkDevice& device);    
+    ImageView(VkDevice& device, SwapChain& swap_chain);    
 
     ~ImageView();
 

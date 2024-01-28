@@ -2,11 +2,11 @@
 #include <stdexcept>
 #include <iostream>
 #include <set>
-#include "Graphics/Environment/PhysicalDeviceManager.hpp"
-#include "Graphics/Environment/QueueUtils.hpp"
-#include "Graphics/Environment/Constants.hpp"
+#include "PhysicalDeviceManager.hpp"
+#include "QueueUtils.hpp"
+#include "Constants.hpp"
 #include "ansi.h"
-#include "Logging/Logging.hpp"
+#include "Logging.hpp"
 
 /**
  * @brief Constructs a PhysicalDeviceManager object.
@@ -127,10 +127,10 @@ bool PhysicalDeviceManager::checkDeviceExtensionSupport(const VkPhysicalDevice& 
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, available_extensions.data());
 
 	// Create a set of required extensions
-	std::set<const char*> required_extensions(device_extensions.begin(), device_extensions.end());
+	std::set<const char*> required_extensions(DEVICE_EXTENSIONS.begin(), DEVICE_EXTENSIONS.end());
 
 	// Check if each required extension is supported by the device
-	for (const char* extension : device_extensions) {
+	for (const char* extension : DEVICE_EXTENSIONS) {
 		for (const auto& available_extension : available_extensions) {
 			if (strcmp(extension, available_extension.extensionName) == 0) {
 				// Extension is supported, continue to the next one

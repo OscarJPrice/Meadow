@@ -1,7 +1,7 @@
-#include "Graphics/Environment/ImageView.hpp"
+#include "ImageView.hpp"
 #include <stdexcept>
 
-ImageView::ImageView(SwapChain& swap_chain, VkDevice& device)
+ImageView::ImageView(VkDevice& device, SwapChain& swap_chain)
     : device(device)//, swap_chain(swap_chain)
 {
     swap_chain_image_views.resize(swap_chain.images().size());

@@ -1,4 +1,4 @@
-#include "Graphics/Environment/Window.hpp"
+#include "Window.hpp"
 
 /**
  * @brief Constructs a Window object with the specified width, height, and name.

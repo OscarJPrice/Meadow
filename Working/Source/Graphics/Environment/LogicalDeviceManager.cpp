@@ -1,9 +1,9 @@
 #include <set>
 #include <stdexcept>
-#include "Graphics/Environment/LogicalDeviceManager.hpp"
-#include "Graphics/Environment/QueueUtils.hpp"
-#include "Graphics/Environment/Instance.hpp"
-#include "Graphics/Environment/Constants.hpp"
+#include "LogicalDeviceManager.hpp"
+#include "QueueUtils.hpp"
+#include "Instance.hpp"
+#include "Constants.hpp"
 #include "ansi.h"
 
 
@@ -55,8 +55,8 @@ LogicalDeviceManager::LogicalDeviceManager(VkPhysicalDevice& physical_device, Vk
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size()),
 		.pQueueCreateInfos = queue_create_infos.data(),
-		.enabledExtensionCount = static_cast<uint32_t>(device_extensions.size()),
-		.ppEnabledExtensionNames = device_extensions.data(),
+		.enabledExtensionCount = static_cast<uint32_t>(DEVICE_EXTENSIONS.size()),
+		.ppEnabledExtensionNames = DEVICE_EXTENSIONS.data(),
 		.pEnabledFeatures = &device_features,
 	};
 

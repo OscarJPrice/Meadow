@@ -7,7 +7,7 @@ const static std::vector<const char*> VALIDATION_LAYERS {
     "VK_LAYER_KHRONOS_validation"
 };
 
-const std::vector<const char*> device_extensions {
+const std::vector<const char*> DEVICE_EXTENSIONS {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 #ifdef __APPLE__
     "VK_KHR_portability_subset",

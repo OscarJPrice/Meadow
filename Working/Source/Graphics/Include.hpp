@@ -8,6 +8,7 @@
 #include "Environment/LogicalDeviceManager.hpp"
 #include "Environment/SwapChain.hpp"
 #include "Environment/ImageView.hpp"
+#include "Pipeline/Pipeline.hpp"
 
 
 #endif
