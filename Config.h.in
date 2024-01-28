@@ -1,0 +1,4 @@
+
+#pragma once
+
+#define SHADER_BINARY_DIR "@SHADER_BINARY_DIR@/"

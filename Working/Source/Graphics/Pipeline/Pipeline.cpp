@@ -4,11 +4,12 @@
 #include "Constants.hpp"
 #include "RenderPass.hpp"
 #include "Viewport.hpp"
+#include "Config.h"
 
 Pipeline::Pipeline(const VkDevice& device, const SwapChain& swap_chain, bool blend) : 
     device(device),
-    vert_shader_module("SPIR-V/Shader.vert.spv", device),
-    frag_shader_module("SPIR-V/Shader.frag.spv", device),
+    vert_shader_module(SHADER_BINARY_DIR "Shader.vert.spv", device),
+    frag_shader_module(SHADER_BINARY_DIR "Shader.frag.spv", device),
     viewport(swap_chain.extent()),
     render_pass(device, swap_chain)
 {
@@ -49,17 +50,18 @@ Pipeline::Pipeline(const VkDevice& device, const SwapChain& swap_chain, bool ble
         .depthClampEnable = VK_FALSE,
         .rasterizerDiscardEnable = VK_FALSE,
         .polygonMode = VK_POLYGON_MODE_FILL,
-        .lineWidth = 1.0f,
         .cullMode = VK_CULL_MODE_BACK_BIT,
         .frontFace = VK_FRONT_FACE_CLOCKWISE,
         .depthBiasEnable = VK_FALSE,
         .depthBiasConstantFactor = 0.0f,
+        .lineWidth = 1.0f,
+
     };
 
     VkPipelineMultisampleStateCreateInfo multisample_state_create_info {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-        .sampleShadingEnable = VK_FALSE,
         .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+        .sampleShadingEnable = VK_FALSE,
         .minSampleShading = 1.0f,
         .pSampleMask = nullptr,
         .alphaToCoverageEnable = VK_FALSE,

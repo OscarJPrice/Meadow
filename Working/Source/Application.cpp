@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include <stdexcept>
 
 Application::Application(uint32_t width, uint32_t height, const char* name) :
     window(width, height, name), 

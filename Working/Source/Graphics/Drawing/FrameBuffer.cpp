@@ -1,4 +1,5 @@
 #include "FrameBuffer.hpp"
+#include <stdexcept>
 
 FrameBuffer::FrameBuffer(const VkDevice& device,
     const SwapChain& swap_chain,     
@@ -8,7 +9,7 @@ FrameBuffer::FrameBuffer(const VkDevice& device,
 {
     frame_buffers.resize(swap_chain_image_views.size());
 
-    for (int i = 0; i < swap_chain_image_views.size(); i++) {
+    for (uint32_t i = 0; i < swap_chain_image_views.size(); i++) {
 
 
         VkFramebufferCreateInfo framebuffer_info = {

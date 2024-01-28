@@ -8,31 +8,36 @@ add_compile_options(-Wall)
 find_package(Vulkan REQUIRED)
 find_program(GLSLC_EXECUTABLE NAMES glslc)
 
+if(NOT GLSLC_EXECUTABLE)
+  message(FATAL_ERROR "glslc executable not found")
+endif()
 
-set(SHADER_SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/Working/Shaders")
-set(SHADER_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/SPIR-V")
+set(SHADER_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Working/Shaders")
+set(SHADER_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SPIR-V")
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/Working/Config.h)
+
 file(MAKE_DIRECTORY ${SHADER_BINARY_DIR})
 
-file(GLOB_RECURSE GLSL_SOURCE_FILES
-  "${SHADER_SOURCE_DIR}/*.frag"
-  "${SHADER_SOURCE_DIR}/*.vert"
-  "${SHADER_SOURCE_DIR}/*.comp"
-)
+# Find all shader files
+file(GLOB SHADER_FILES "${SHADER_SOURCE_DIR}/*")
 
-foreach(GLSL ${GLSL_SOURCE_FILES})
-  get_filename_component(FILE_NAME ${GLSL} NAME)
-  set(SPIRV "${SHADER_BINARY_DIR}/${FILE_NAME}.spv")
-  add_custom_command(
-    OUTPUT ${SPIRV}
-    COMMAND ${GLSLC_EXECUTABLE} ${GLSL} -o ${SPIRV}
-    DEPENDS ${GLSL}
-    IMPLICIT_DEPENDS CXX ${GLSL}
-    COMMENT "Compiling ${GLSL} -> ${SPIRV}"
-  )
-  list(APPEND SPIRV_BINARY_FILES ${SPIRV})
-endforeach(GLSL)
+# Iterate over each shader file
+foreach(SHADER_FILE ${SHADER_FILES})
+    get_filename_component(SHADER_NAME ${SHADER_FILE} NAME)
 
-add_custom_target(Shaders DEPENDS ${SPIRV_BINARY_FILES})
+    set(SHADER_OUTPUT "${SHADER_BINARY_DIR}/${SHADER_NAME}.spv")
+
+    # Compile each shader
+    add_custom_command(
+        OUTPUT ${SHADER_OUTPUT}
+        COMMAND glslc ${SHADER_FILE} -o ${SHADER_OUTPUT}
+        DEPENDS ${SHADER_FILE}
+    )
+
+    # Add a target for the shader
+    add_custom_target(${SHADER_NAME} ALL DEPENDS ${SHADER_OUTPUT})
+endforeach()
 
 include_directories(./Working/Source)
 include_directories(./Working/Source/Graphics)
@@ -40,6 +45,7 @@ include_directories(./Working/Source/Graphics/Environment)
 include_directories(./Working/Source/Graphics/Pipeline)
 include_directories(./Working/Source/Graphics/Drawing)
 include_directories(./Working/Source/Logging)
+include_directories(./Working/)
 
 if(WIN32)
 	include_directories(C:/glfw-3.3.9.bin.WIN64/include C:/VulkanSDK/1.3.275.0/Include)
@@ -56,7 +62,7 @@ if(MSVC)
 	add_compile_options(/wd4626) # Disable warning C4626: 'X': assignment operator was implicitly defined as deleted
 	add_compile_options(/wd4514) # Disable warning C4514: 'X': unreferenced inline function has been removed
 	add_compile_options(/wd4100) # Disable warning C4100: 'X': unreferenced formal parameter
-  add_compile_options(/Ox) # Disable warning C4100: 'X': unreferenced formal parameter
+	add_compile_options(/wd4458) # Disable warning C4458: declaration of 'X' hides class member
 else()
   add_compile_options(-Wpedantic  -Werror  -O3)
 endif()
@@ -70,7 +76,7 @@ aux_source_directory(./Working/Source/Logging SOURCE_FILES)
 
 
 add_executable(Meadow ${SOURCE_FILES})
-add_dependencies(Meadow Shaders)
+#add_dependencies(Meadow Shaders)
 
 target_link_libraries(Meadow ${Vulkan_LIBRARIES})
 

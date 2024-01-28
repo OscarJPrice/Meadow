@@ -16,3 +16,4 @@ Logs
 *.code-workspace
 **/.DS_Store
 SPIR-V/
+Working/Config.h

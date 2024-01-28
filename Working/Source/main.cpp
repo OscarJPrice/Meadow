@@ -3,5 +3,11 @@
 #include "Application.hpp"
 
 int main(){
-	Application app(1000, 800, "Meadow");
+	try {
+		Application app(1000, 800, "Meadow");
+	}
+	catch (const std::exception& e) {
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 }
