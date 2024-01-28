@@ -1,15 +1,14 @@
 #include <fstream>
 #include <stdexcept>
 #include "Pipeline.hpp"
-#include "Logging.hpp"
 #include "Constants.hpp"
 #include "RenderPass.hpp"
 #include "Viewport.hpp"
 
 Pipeline::Pipeline(VkDevice& device, VkExtent2D& swapchain, bool blend) : 
     device(device),
-    vert_shader_module("Shaders/Shader.vert.spv", device),
-    frag_shader_module("Shaders/Shader.frag.spv", device)
+    vert_shader_module("SPIR-V/Shader.vert.spv", device),
+    frag_shader_module("SPIR-V/Shader.frag.spv", device)
 {
 
     shader_stages[0] = {

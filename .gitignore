@@ -15,4 +15,4 @@ vkvia*
 Logs
 *.code-workspace
 **/.DS_Store
-Shaders/*
+SPIR-V/
