@@ -6,8 +6,8 @@ Working/Meadow
 out
 build
 CMakeSettings.json
-.vs
-.vscode
+**/.vs
+**/.vscode
 *.vcxproj*
 *.sln
 Meadow
