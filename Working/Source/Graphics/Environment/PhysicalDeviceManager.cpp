@@ -4,7 +4,7 @@
 #include <set>
 #include "PhysicalDeviceManager.hpp"
 #include "QueueUtils.hpp"
-#include "Constants.hpp"
+#include "EnvironmentConstants.hpp"
 #include "ansi.h"
 #include "Logging.hpp"
 
@@ -127,10 +127,10 @@ bool PhysicalDeviceManager::checkDeviceExtensionSupport(const VkPhysicalDevice& 
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, available_extensions.data());
 
 	// Create a set of required extensions
-	std::set<const char*> required_extensions(DEVICE_EXTENSIONS.begin(), DEVICE_EXTENSIONS.end());
+	std::set<const char*> required_extensions(EnvConstants::DEVICE_EXTENSIONS.begin(), EnvConstants::DEVICE_EXTENSIONS.end());
 
 	// Check if each required extension is supported by the device
-	for (const char* extension : DEVICE_EXTENSIONS) {
+	for (const char* extension : EnvConstants::DEVICE_EXTENSIONS) {
 		for (const auto& available_extension : available_extensions) {
 			if (strcmp(extension, available_extension.extensionName) == 0) {
 				// Extension is supported, continue to the next one

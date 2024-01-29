@@ -36,9 +36,11 @@ public:
 
     ~SwapChain();
 
-    inline operator const VkSwapchainKHR&() { return swap_chain; }
+    inline operator const VkSwapchainKHR&() const { return swap_chain; }
 
     inline operator VkSwapchainKHR*() { return &swap_chain; }
+
+    inline operator const VkSwapchainKHR*() const { return &swap_chain; }
 
     inline operator const VkFormat&() const { return swap_chain_image_format; }
 

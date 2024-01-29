@@ -1,7 +1,7 @@
 #include <fstream>
 #include <stdexcept>
 #include "Pipeline.hpp"
-#include "Constants.hpp"
+#include "PipelineConstants.hpp"
 #include "RenderPass.hpp"
 #include "Viewport.hpp"
 #include "Config.h"

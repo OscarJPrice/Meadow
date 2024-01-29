@@ -24,6 +24,10 @@ public:
         return present_queue;
     }
 
+    inline operator const VkQueue() const {
+        return present_queue;
+    }
+
 };
 
 #endif // LOGICAL_DEVICE_MANAGER_HPP

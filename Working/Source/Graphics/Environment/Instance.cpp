@@ -4,7 +4,7 @@
 #include "Instance.hpp"
 #include "Logging.hpp"
 #include "ansi.h"
-#include "Constants.hpp"
+#include "EnvironmentConstants.hpp"
 
 
 /**
@@ -35,9 +35,9 @@ Instance::Instance(const char* name) {
     VkDebugUtilsMessengerCreateInfoEXT debug_create_info;
 
     // Enable validation layers if in debug mode
-    if (DEBUG_MODE) {
-        create_info.enabledLayerCount = static_cast<uint32_t>(VALIDATION_LAYERS.size());
-        create_info.ppEnabledLayerNames = VALIDATION_LAYERS.data();
+    if (EnvConstants::DEBUG_MODE) {
+        create_info.enabledLayerCount = static_cast<uint32_t>(EnvConstants::VALIDATION_LAYERS.size());
+        create_info.ppEnabledLayerNames = EnvConstants::VALIDATION_LAYERS.data();
 
         debugMessengerPopulateCreateInfo(debug_create_info);
         create_info.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debug_create_info;
@@ -71,7 +71,7 @@ Instance::Instance(const char* name) {
     }
 
     // Set up debug callback if in debug mode
-    if (DEBUG_MODE) {
+    if (EnvConstants::DEBUG_MODE) {
         VkDebugUtilsMessengerCreateInfoEXT messenger_debug_create_info;
         debugMessengerPopulateCreateInfo(messenger_debug_create_info);
 
@@ -88,7 +88,7 @@ Instance::Instance(const char* name) {
  * This destructor destroys the Vulkan instance and the associated debug messenger (if in debug mode).
  */
 Instance::~Instance() {
-    if (DEBUG_MODE) {
+    if (EnvConstants::DEBUG_MODE) {
         destroyDebugUtilsMessengerExtension(instance, nullptr, debug_messenger);
     }
     vkDestroyInstance(instance, nullptr);
@@ -99,7 +99,7 @@ Instance::~Instance() {
  * 
  * This function retrieves the required instance extensions using glfwGetRequiredInstanceExtensions() and adds them to a vector.
  * If the platform is Apple, it also adds the VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME extension.
- * If ENABLE_VALIDATION_LAYERS is true, it also adds the VK_EXT_DEBUG_UTILS_EXTENSION_NAME extension.
+ * If ENABLE_EnvConstants::VALIDATION_LAYERS is true, it also adds the VK_EXT_DEBUG_UTILS_EXTENSION_NAME extension.
  * 
  * @return std::vector<const char*> A vector of const char* containing the required extensions.
  */
@@ -117,7 +117,7 @@ std::vector<const char*> Instance::getRequiredExtensions() {
         extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
     #endif
 
-    if (DEBUG_MODE) {
+    if (EnvConstants::DEBUG_MODE) {
         // Add the VK_EXT_DEBUG_UTILS_EXTENSION_NAME extension if in debug mode
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
@@ -181,10 +181,10 @@ bool Instance::checkValidationLayerSupport() {
     }
 
     // Check if the required validation layers are supported
-    // This loop checks if each validation layer in VALIDATION_LAYERS is present in the available_layers
+    // This loop checks if each validation layer in EnvConstants::VALIDATION_LAYERS is present in the available_layers
     // If a validation layer is found, it continues to the next layer
     // If a validation layer is not found, it returns false
-    for (const char* layer : VALIDATION_LAYERS) {
+    for (const char* layer : EnvConstants::VALIDATION_LAYERS) {
         for (VkLayerProperties available_layer : available_layers) {
             if (strcmp(layer, available_layer.layerName) == 0) {
                 goto next;

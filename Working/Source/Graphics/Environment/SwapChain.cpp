@@ -14,6 +14,17 @@
  * @param physical_device The Vulkan physical device.
  * @param logical_device The Vulkan logical device.
  * @param surface The Vulkan surface.
+ * 
+ * A swapchain is essentially an image holder. These held images are to be "swapped"
+ * into the screen buffer. Prior to the swap, the images are rendered to. There are
+ * two big ways a swapchain can work.
+ * * Double buffering, where the first image is the one currently displayes to the 
+ * screen buffer (see Window.cpp for more info on the window).
+ * * Triple buffering, where there are three images, and the first image is the one
+ * currently displayed to the screen buffer, the second is the one currently being 
+ * rendered, and the third is the one after that. It is the logical continuation of
+ * double buffering.
+ * 
  */
 SwapChain::SwapChain(GLFWwindow* window, const VkPhysicalDevice& physical_device, 
 const VkDevice& logical_device, const VkSurfaceKHR& surface) : logical_device(logical_device) {

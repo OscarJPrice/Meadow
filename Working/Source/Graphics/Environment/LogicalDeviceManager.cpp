@@ -3,7 +3,7 @@
 #include "LogicalDeviceManager.hpp"
 #include "QueueUtils.hpp"
 #include "Instance.hpp"
-#include "Constants.hpp"
+#include "EnvironmentConstants.hpp"
 #include "ansi.h"
 
 
@@ -55,15 +55,15 @@ LogicalDeviceManager::LogicalDeviceManager(const VkPhysicalDevice& physical_devi
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size()),
 		.pQueueCreateInfos = queue_create_infos.data(),
-		.enabledExtensionCount = static_cast<uint32_t>(DEVICE_EXTENSIONS.size()),
-		.ppEnabledExtensionNames = DEVICE_EXTENSIONS.data(),
+		.enabledExtensionCount = static_cast<uint32_t>(EnvConstants::DEVICE_EXTENSIONS.size()),
+		.ppEnabledExtensionNames = EnvConstants::DEVICE_EXTENSIONS.data(),
 		.pEnabledFeatures = &device_features,
 	};
 
 	// Enable validation layers if in debug mode
-	if (DEBUG_MODE) {
-		create_info.enabledLayerCount = static_cast<uint32_t>(VALIDATION_LAYERS.size());
-		create_info.ppEnabledLayerNames = VALIDATION_LAYERS.data();
+	if (EnvConstants::DEBUG_MODE) {
+		create_info.enabledLayerCount = static_cast<uint32_t>(EnvConstants::VALIDATION_LAYERS.size());
+		create_info.ppEnabledLayerNames = EnvConstants::VALIDATION_LAYERS.data();
 	}
 	else {
 		create_info.enabledLayerCount = 0;

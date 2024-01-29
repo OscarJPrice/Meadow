@@ -11,11 +11,7 @@ class Application {
     Pipeline pipeline;
     FrameBuffer frame_buffer;
     CommandPool command_pool;
-    CommandBuffer command_buffer;
-
-    VkSemaphore image_available_semaphore;
-    VkSemaphore render_finished_semaphore;
-    VkFence unique_frame_rendered_fence;
+    CommandBuffers<> command_buffers;
 
 public:
     Application(uint32_t width, uint32_t height, const char* name);
