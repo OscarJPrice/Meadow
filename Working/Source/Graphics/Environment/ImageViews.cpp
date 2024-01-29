@@ -1,7 +1,7 @@
-#include "ImageView.hpp"
+#include "ImageViews.hpp"
 #include <stdexcept>
 
-ImageView::ImageView(const VkDevice& device, const SwapChain& swap_chain)
+ImageViews::ImageViews(const VkDevice& device, const SwapChain& swap_chain)
     : device(device)//, swap_chain(swap_chain)
 {
     swap_chain_image_views.resize(swap_chain.images().size());
@@ -11,7 +11,7 @@ ImageView::ImageView(const VkDevice& device, const SwapChain& swap_chain)
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .image = image,
             .viewType = VK_IMAGE_VIEW_TYPE_2D,
-            .format = swap_chain,
+            .format = swap_chain.format(),
             .components = {
                 .r = VK_COMPONENT_SWIZZLE_IDENTITY,
                 .g = VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -34,7 +34,7 @@ ImageView::ImageView(const VkDevice& device, const SwapChain& swap_chain)
     }
 }
 
-ImageView::~ImageView() {
+ImageViews::~ImageViews() {
     for (auto& image_view : swap_chain_image_views) {
         vkDestroyImageView(device, image_view, nullptr);
     }

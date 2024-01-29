@@ -20,15 +20,7 @@ public:
         return device;
     }
 
-    inline operator VkQueue&() {
-        return present_queue;
-    }
-
-    inline operator VkQueue() {
-        return present_queue;
-    }
-
-    inline VkQueue getQueue() const {
+    inline VkQueue queue() const {
 		return present_queue;
 	}
 

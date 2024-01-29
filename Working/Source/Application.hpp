@@ -7,7 +7,7 @@ class Application {
     PhysicalDeviceManager physical_device;
     LogicalDeviceManager logical_device;
     SwapChain swap_chain;
-    ImageView image_view;
+    ImageViews image_view;
     Pipeline pipeline;
     FrameBuffer frame_buffer;
     CommandPool command_pool;

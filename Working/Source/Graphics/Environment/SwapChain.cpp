@@ -27,14 +27,13 @@
  * 
  */
 SwapChain::SwapChain(GLFWwindow* window, const VkPhysicalDevice& physical_device, 
-const VkDevice& logical_device, const VkSurfaceKHR& surface) : logical_device(logical_device) {
-
-    // Query swap chain support details
-    SwapChainSupportDetails swap_chain_support = PhysicalDeviceManager::querySwapChainSupport(physical_device, surface);
-
-    // Choose the surface format and present mode
-    VkSurfaceFormatKHR surface_format = chooseSwapSurfaceFormat(swap_chain_support.formats);
-    swap_chain_image_format = surface_format.format;
+const VkDevice& logical_device, const VkSurfaceKHR& surface) :
+    logical_device(logical_device),
+    swap_chain_support(PhysicalDeviceManager::querySwapChainSupport(physical_device, surface)),     // Query swap chain support details
+    surface_format(chooseSwapSurfaceFormat(swap_chain_support.formats)),                       // Choose the surface format
+    swap_chain_image_format(surface_format.format),             // Choose the image format
+    swap_chain_extent(chooseSwapExtent(window, swap_chain_support.capabilities))               // Choose the swap extent)
+{
 
     VkPresentModeKHR present_mode = chooseSwapPresentMode(swap_chain_support.present_modes);
 

@@ -18,10 +18,6 @@ public:
 
     ~Surface();
 
-    inline operator VkSurfaceKHR() {
-        return surface;
-    }
-
     inline operator VkSurfaceKHR&() {
         return surface;
     }

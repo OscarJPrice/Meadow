@@ -19,11 +19,6 @@ public:
 
     ~Instance();
 
-
-    inline operator VkInstance() {
-        return instance;
-    }
-
     inline operator VkInstance&() {
         return instance;
     }

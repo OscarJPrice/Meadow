@@ -11,7 +11,7 @@
  * Image views are used to specify how to access the images and which part of the images to access.
  * 
  */
-class ImageView {
+class ImageViews {
 
     std::vector<VkImageView> swap_chain_image_views;
 
@@ -20,9 +20,9 @@ class ImageView {
 
 public:
 
-    ImageView(const VkDevice& device, const SwapChain& swap_chain);    
+    ImageViews(const VkDevice& device, const SwapChain& swap_chain);    
 
-    ~ImageView();
+    ~ImageViews();
 
     inline operator std::vector<VkImageView>&() { return swap_chain_image_views; }
 

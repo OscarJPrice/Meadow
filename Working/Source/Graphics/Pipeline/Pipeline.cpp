@@ -11,7 +11,7 @@ Pipeline::Pipeline(const VkDevice& device, const SwapChain& swap_chain, bool ble
     vert_shader_module(SHADER_BINARY_DIR "Shader.vert.spv", device),
     frag_shader_module(SHADER_BINARY_DIR "Shader.frag.spv", device),
     viewport(swap_chain.extent()),
-    render_pass(device, swap_chain)
+    render_pass(device, swap_chain.format())
 {
 
     shader_stages[0] = {

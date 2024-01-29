@@ -19,14 +19,14 @@ class CommandBuffers {
 
     const LogicalDeviceManager& logical_device;
     // const VkQueue& drawing_queue;
-    const SwapChain& swap_chain;
+    SwapChain& swap_chain;
     Pipeline& pipeline;
     const std::vector<VkFramebuffer>& frame_buffers;
     const VkCommandPool& command_pool;
 
 public:
     
-    CommandBuffers( const LogicalDeviceManager& device, const SwapChain& swap_chain,
+    CommandBuffers( const LogicalDeviceManager& device, SwapChain& swap_chain,
         Pipeline& pipeline, const std::vector<VkFramebuffer>& frame_buffers,
         const VkCommandPool& command_pool) :
         
@@ -175,7 +175,7 @@ public:
             .pSignalSemaphores = &render_finished_semaphores[current_frame]
         };
 
-        if (vkQueueSubmit(logical_device.getQueue(), 1, &submit_info,
+        if (vkQueueSubmit(logical_device.queue(), 1, &submit_info,
             frame_rendered_fence[current_frame])) 
         {
             throw std::runtime_error("Failed to submit draw command buffer!");
@@ -190,7 +190,7 @@ public:
             .pImageIndices = &image_index
         };
 
-        vkQueuePresentKHR(logical_device.getQueue(), &present_info);
+        vkQueuePresentKHR(logical_device.queue(), &present_info);
         current_frame = (current_frame + 1) % N;
     }
 };
