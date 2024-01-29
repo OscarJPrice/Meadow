@@ -24,9 +24,13 @@ public:
         return present_queue;
     }
 
-    inline operator const VkQueue() const {
+    inline operator VkQueue() {
         return present_queue;
     }
+
+    inline VkQueue getQueue() const {
+		return present_queue;
+	}
 
 };
 

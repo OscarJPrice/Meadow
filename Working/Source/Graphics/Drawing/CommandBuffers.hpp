@@ -57,7 +57,7 @@ public:
     }
 
     ~CommandBuffers() {
-        vkFreeCommandBuffers(logical_device, command_pool, command_buffers.size(), command_buffers.data());
+        vkFreeCommandBuffers(logical_device, command_pool, (uint32_t)command_buffers.size(), command_buffers.data());
         for (uint32_t i = 0; i < N; i++) {
             vkDestroySemaphore(logical_device, image_available_semaphores[i], nullptr);
             vkDestroySemaphore(logical_device, render_finished_semaphores[i], nullptr);
@@ -82,7 +82,7 @@ public:
             .flags = VK_FENCE_CREATE_SIGNALED_BIT
         };
 
-        for (int i = 0; i < N; i++) {
+        for (uint32_t i = 0; i < N; i++) {
             if (vkCreateSemaphore(logical_device, &semaphore_create_info, nullptr, 
                     &image_available_semaphores[i]) ||
                 vkCreateSemaphore(logical_device, &semaphore_create_info, nullptr, 
@@ -175,7 +175,7 @@ public:
             .pSignalSemaphores = &render_finished_semaphores[current_frame]
         };
 
-        if (vkQueueSubmit(logical_device, 1, &submit_info, 
+        if (vkQueueSubmit(logical_device.getQueue(), 1, &submit_info,
             frame_rendered_fence[current_frame])) 
         {
             throw std::runtime_error("Failed to submit draw command buffer!");
@@ -190,7 +190,7 @@ public:
             .pImageIndices = &image_index
         };
 
-        vkQueuePresentKHR((VkQueue)logical_device, &present_info);
+        vkQueuePresentKHR(logical_device.getQueue(), &present_info);
         current_frame = (current_frame + 1) % N;
     }
 };
