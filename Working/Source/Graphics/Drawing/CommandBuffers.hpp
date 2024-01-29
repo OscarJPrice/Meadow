@@ -191,7 +191,7 @@ public:
         };
 
         vkQueuePresentKHR(logical_device.queue(), &present_info);
-        current_frame = (current_frame + 1) % N;
+        current_frame = (current_frame + 1) * (current_frame+1 < N);
     }
 };
 
