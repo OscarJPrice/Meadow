@@ -17,10 +17,6 @@ public:
 
     ~Window();
 
-    inline operator GLFWwindow*() {
-        return window;
-    }
-
     inline operator bool() {
         glfwPollEvents();
         return !glfwWindowShouldClose(window);

@@ -6,12 +6,7 @@
 
 #include "Window.hpp"
 #include "Instance.hpp"
-
-struct SwapChainSupportDetails {
-	VkSurfaceCapabilitiesKHR capabilities;
-	std::vector<VkSurfaceFormatKHR> formats;
-	std::vector<VkPresentModeKHR> present_modes;
-};
+#include "SwapchainSupportDetails.h"
 
 class GraphicsContext : public Window, public Instance
 {
@@ -24,6 +19,16 @@ class GraphicsContext : public Window, public Instance
 public:
 	GraphicsContext(const char* name);
 	~GraphicsContext();
+
+	inline const VkSurfaceKHR& getSurface() const { return surface; }
+
+	inline const VkPhysicalDevice& getPhysicalDevice() const { return physical_device; }
+
+	inline const VkDevice& getLogicalDevice() const { return logical_device; }
+
+	inline const VkQueue& getPresentQueue() const { return present_queue; }
+
+	inline GLFWwindow* getWindow() const { return window; }
 
 private:
 //Create functions
@@ -41,7 +46,9 @@ private:
 	static bool checkPhysicalDeviceExtensionSupport(const VkPhysicalDevice& device);
 
 public:
-	static SwapChainSupportDetails queryPhysicalSwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
+	static SwapchainSupportDetails queryPhysicalSwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
+
+	inline SwapchainSupportDetails queryPhysicalSwapChainSupport() const { return queryPhysicalSwapChainSupport(physical_device, surface); }
 private:
 
 };

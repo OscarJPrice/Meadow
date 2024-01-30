@@ -46,6 +46,7 @@ include_directories(./Working/Source/Graphics)
 include_directories(./Working/Source/Graphics/Environment)
 #include_directories(./Working/Source/Graphics/Pipeline)
 #include_directories(./Working/Source/Graphics/Drawing)
+include_directories(./Working/Source/Graphics/Swapchain)
 include_directories(./Working/Source/Logging)
 include_directories(./Working/)
 
@@ -75,6 +76,7 @@ aux_source_directory(./Working/Source/Graphics/Environment SOURCE_FILES)
 #aux_source_directory(./Working/Source/Graphics/Pipeline SOURCE_FILES)
 #aux_source_directory(./Working/Source/Graphics/Drawing SOURCE_FILES)
 aux_source_directory(./Working/Source/Logging SOURCE_FILES)
+aux_source_directory(./Working/Source/Graphics/Swapchain SOURCE_FILES)
 
 
 add_executable(Meadow ${SOURCE_FILES})

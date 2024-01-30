@@ -22,7 +22,7 @@ class Pipeline {
     VkPipelineShaderStageCreateInfo shader_stages[2];
 
 public:
-    Pipeline(const VkDevice& device, const SwapChain& swapchain, const bool blend = false);
+    Pipeline(const VkDevice& device, const Swapchain& swapchain, const bool blend = false);
 
     ~Pipeline();
 

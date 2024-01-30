@@ -147,7 +147,7 @@ GraphicsContext::~GraphicsContext() {
 		bool swap_chain_adequate = false;
 		if (extensions_supported) {
 			// Query the swap chain support details
-			SwapChainSupportDetails swap_chain_support = queryPhysicalSwapChainSupport(device, surface);
+			SwapchainSupportDetails swap_chain_support = queryPhysicalSwapChainSupport(device, surface);
 			swap_chain_adequate = !swap_chain_support.formats.empty() && !swap_chain_support.present_modes.empty();
 		}
 		// Return true if the device has complete queue families, adequate swap chain support, and supported extensions
@@ -207,10 +207,10 @@ GraphicsContext::~GraphicsContext() {
 
 	}
 
-	SwapChainSupportDetails GraphicsContext::queryPhysicalSwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface) {
+	SwapchainSupportDetails GraphicsContext::queryPhysicalSwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface) {
 
 		// Query the surface capabilities of the physical device
-		SwapChainSupportDetails details;
+		SwapchainSupportDetails details;
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
 
 		// Query the available surface formats

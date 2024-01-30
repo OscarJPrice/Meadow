@@ -1,5 +1,7 @@
 #include "RenderPass.hpp"
 #include <stdexcept>
+#include <iostream>
+
 RenderPass::RenderPass(const VkDevice& device, const VkFormat& format) : device(device) {
     VkAttachmentDescription color_attachment = {
         .format = format,
