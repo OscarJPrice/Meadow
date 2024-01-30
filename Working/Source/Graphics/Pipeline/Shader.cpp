@@ -3,8 +3,17 @@
 #include <fstream>
 #include <stdexcept>
 #include <vector>
+#include <iostream>
+#include "Logging.hpp"
 
-Shader::Shader(const char* filename, const VkDevice& device) : device(device) {
+Shader Shader::create(
+    const char* filename, 
+    const VkDevice& device, 
+    VkShaderStageFlagBits stage)
+{
+
+    Shader shader;
+
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
         throw std::runtime_error("Failed to open file");
@@ -17,11 +26,17 @@ Shader::Shader(const char* filename, const VkDevice& device) : device(device) {
         .codeSize = code.size(),
         .pCode = reinterpret_cast<const uint32_t*>(code.data())
     };
-    if (vkCreateShaderModule(device, &shader_create_info, nullptr, &shaderModule)) {
+    if (vkCreateShaderModule(device, &shader_create_info, nullptr, &shader.shader)) {
         throw std::runtime_error("Failed to create shader module");
     }
+    Log::verbose<<"Shader created, handle: " << shader.shader <<std::endl;
+
+    shader.stage = stage;
+
+    return shader;
 }
 
-Shader::~Shader() {
-    vkDestroyShaderModule(device, shaderModule, nullptr);
+void Shader::destroy(const VkShaderModule& shader, const VkDevice& device) {
+    Log::verbose<<"Destroying shader: " << shader <<std::endl;
+    vkDestroyShaderModule(device, shader, nullptr);
 }

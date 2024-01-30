@@ -31,9 +31,18 @@ public:
 
     ~Swapchain();
 
-    inline void setRenderPass(VkRenderPass& render_pass) { this->render_pass = &render_pass; }
+    inline void setRenderPass(VkRenderPass& render_pass) { 
+        this->render_pass = &render_pass; 
+        recreate();
+    }
 
     inline const VkFormat& getFormat() { return image_format; }
+
+    inline VkRenderPass& getRenderPass() { return *render_pass; }
+
+    inline const VkExtent2D& getExtent() { return extent; }
+
+    void recreate();
 
 private:
 
@@ -42,8 +51,6 @@ private:
     void createFramebuffers(const GraphicsContext& graphics_context, const VkRenderPass& render_pass);
 
     void createImageViews();
-
-    void recreate();
 
     void cleanup();
 

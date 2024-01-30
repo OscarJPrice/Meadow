@@ -2,6 +2,7 @@
 #define _CONFIG_H_
 
 #include <vector>
+#include <vulkan/vulkan.h>
 namespace CONSTANTS {
 
     const static std::vector<const char*> VALIDATION_LAYERS {
@@ -9,10 +10,10 @@ namespace CONSTANTS {
     };
 
     const std::vector<const char*> DEVICE_EXTENSIONS {
-        "VK_KHR_swapchain"
     #ifdef __APPLE__
         "VK_KHR_portability_subset",
     #endif
+        "VK_KHR_swapchain"
     };
 
 #ifdef NDEBUG
@@ -21,9 +22,15 @@ namespace CONSTANTS {
     const static bool DEBUG_MODE = true;
 #endif
 
-    #define SHADER_BINARY_DIR "@SHADER_BINARY_DIR@/"
-    #define LOG_DIR "@CMAKE_CURRENT_SOURCE_DIR@/logs/"
-
+    const std::vector<VkDynamicState> DYNAMIC_STATES {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR,
+        VK_DYNAMIC_STATE_LINE_WIDTH
+    };
 }
+
+#define SHADER_BINARY_DIR "@SHADER_BINARY_DIR@/"
+#define LOG_DIR "@CMAKE_CURRENT_SOURCE_DIR@/logs/"
+
 
 #endif // _CONFIG_H_
