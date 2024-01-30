@@ -1,4 +1,29 @@
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
 
-#pragma once
+#include <vector>
+namespace CONSTANTS {
 
-#define SHADER_BINARY_DIR "@SHADER_BINARY_DIR@/"
+    const static std::vector<const char*> VALIDATION_LAYERS {
+        "VK_LAYER_KHRONOS_validation"
+    };
+
+    const std::vector<const char*> DEVICE_EXTENSIONS {
+        "VK_KHR_swapchain"
+    #ifdef __APPLE__
+        "VK_KHR_portability_subset",
+    #endif
+    };
+
+#ifdef NDEBUG
+    const static bool DEBUG_MODE = false;
+#else
+    const static bool DEBUG_MODE = true;
+#endif
+
+    #define SHADER_BINARY_DIR "@SHADER_BINARY_DIR@/"
+    #define LOG_DIR "@CMAKE_CURRENT_SOURCE_DIR@/logs/"
+
+}
+
+#endif // _CONFIG_H_

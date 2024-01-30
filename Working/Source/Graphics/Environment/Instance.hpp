@@ -10,6 +10,8 @@
  * 
  */
 class Instance {
+
+protected:
     VkInstance instance;
     VkDebugUtilsMessengerEXT debug_messenger;
 
@@ -30,8 +32,6 @@ private:
 
     bool checkValidationLayerSupport();
     
-    void setupDebugCallbackSys();
-
     void debugMessengerPopulateCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& create_info);
 
     VkResult createDebugUtilsMessengerExtension(

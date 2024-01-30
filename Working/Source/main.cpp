@@ -1,13 +1,12 @@
 #include <iostream>
-#include "Geometry.hpp"
-#include "Application.hpp"
+#include "GraphicsContext.hpp"
 
 int main(){
-	try {
-		Application app(1000, 800, "Meadow");
+	
+	GraphicsContext gc("NAME OF PROGRAM");
+
+	while (gc) {
+
 	}
-	catch (const std::exception& e) {
-		std::cerr << e.what() << std::endl;
-		return EXIT_FAILURE;
-	}
+
 }

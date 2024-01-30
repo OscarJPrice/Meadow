@@ -1,4 +1,5 @@
 #include "Logging.hpp"
+#include "Config.h"
 #include <filesystem>
 
 bool Log::initialized = false;
@@ -12,10 +13,10 @@ std::ofstream Log::unexpected;
 void Log::init() {
     if (!initialized) {
         initialized = true;
-        std::filesystem::create_directory("Logs");
-        Log::verbose.open("Logs/verbose.log");
-        Log::info.open("Logs/info.log");
-        Log::warning.open("Logs/warning.log");
-        Log::error.open("Logs/error.log");
+        std::filesystem::create_directory(LOG_DIR);
+        Log::verbose.open(LOG_DIR "verbose.log");
+        Log::info.open(LOG_DIR "info.log");
+        Log::warning.open(LOG_DIR "warning.log");
+        Log::error.open(LOG_DIR "error.log");
     }
 }

@@ -17,6 +17,8 @@ set(SHADER_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SPIR-V")
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/Working/Config.h)
 
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/logs")
+
 file(MAKE_DIRECTORY ${SHADER_BINARY_DIR})
 
 # Find all shader files
@@ -42,8 +44,8 @@ endforeach()
 include_directories(./Working/Source)
 include_directories(./Working/Source/Graphics)
 include_directories(./Working/Source/Graphics/Environment)
-include_directories(./Working/Source/Graphics/Pipeline)
-include_directories(./Working/Source/Graphics/Drawing)
+#include_directories(./Working/Source/Graphics/Pipeline)
+#include_directories(./Working/Source/Graphics/Drawing)
 include_directories(./Working/Source/Logging)
 include_directories(./Working/)
 
@@ -70,8 +72,8 @@ endif()
 aux_source_directory(./Working/Source SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Environment SOURCE_FILES)
-aux_source_directory(./Working/Source/Graphics/Pipeline SOURCE_FILES)
-aux_source_directory(./Working/Source/Graphics/Drawing SOURCE_FILES)
+#aux_source_directory(./Working/Source/Graphics/Pipeline SOURCE_FILES)
+#aux_source_directory(./Working/Source/Graphics/Drawing SOURCE_FILES)
 aux_source_directory(./Working/Source/Logging SOURCE_FILES)
 
 
