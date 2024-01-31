@@ -27,6 +27,9 @@ namespace CONSTANTS {
         VK_DYNAMIC_STATE_SCISSOR,
         VK_DYNAMIC_STATE_LINE_WIDTH
     };
+
+    const static uint32_t FRAMES_IN_FLIGHT = 2;
+
 }
 
 #define SHADER_BINARY_DIR "@SHADER_BINARY_DIR@/"

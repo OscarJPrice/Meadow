@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "SwapChain.hpp"
+#include "Swapchain.hpp"
 #include "ansi.h"
 #include "Logging.hpp"
 #include "RenderPass.hpp"
@@ -162,13 +162,17 @@ void Swapchain::createImageViews() {
 }
 
 void Swapchain::cleanup() {
-    for (uint32_t i = 0; i < framebuffers.size(); i++) {
-        vkDestroyFramebuffer(logical_device, framebuffers[i], nullptr);
+    for (auto& framebuffer : framebuffers) {
+        vkDestroyFramebuffer(logical_device, framebuffer, nullptr);
     }
 
     for (auto& image_view : image_views) {
         vkDestroyImageView(graphics_context.getLogicalDevice(), image_view, nullptr);
     }
+    
+    for (auto& image : images) {
+        vkDestroyImage(logical_device, image, nullptr);
+    } 
 
     vkDestroySwapchainKHR(logical_device, swapchain, nullptr);
 }

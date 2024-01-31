@@ -24,6 +24,8 @@ class Swapchain {
     const GraphicsContext& graphics_context;
     VkRenderPass* render_pass;
 
+    const VkClearValue clear_value = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+
 
 public:
 
@@ -41,6 +43,10 @@ public:
     inline VkRenderPass& getRenderPass() { return *render_pass; }
 
     inline const VkExtent2D& getExtent() { return extent; }
+
+    inline const std::vector<VkFramebuffer>& getFramebuffers() { return framebuffers; }
+
+    inline const VkClearValue& getClearValue() { return clear_value; }
 
     void recreate();
 

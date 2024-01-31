@@ -6,6 +6,8 @@
 class Viewport {
 
 protected:
+
+protected:
     VkViewport viewport;
     VkRect2D scissor;
     VkPipelineViewportStateCreateInfo viewport_state_create_info;

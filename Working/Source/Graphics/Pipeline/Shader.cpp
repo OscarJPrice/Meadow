@@ -29,7 +29,6 @@ Shader Shader::create(
     if (vkCreateShaderModule(device, &shader_create_info, nullptr, &shader.shader)) {
         throw std::runtime_error("Failed to create shader module");
     }
-    Log::verbose<<"Shader created, handle: " << shader.shader <<std::endl;
 
     shader.stage = stage;
 
@@ -37,6 +36,5 @@ Shader Shader::create(
 }
 
 void Shader::destroy(const VkShaderModule& shader, const VkDevice& device) {
-    Log::verbose<<"Destroying shader: " << shader <<std::endl;
     vkDestroyShaderModule(device, shader, nullptr);
 }

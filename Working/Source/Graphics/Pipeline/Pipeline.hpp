@@ -7,14 +7,13 @@
 #include "Viewport.hpp"
 #include "Shader.hpp"
 
-class Pipeline : Viewport {
+class Pipeline : public Viewport {
     const GraphicsContext& graphics_context;
     Swapchain& swapchain;
 
     VkPipelineLayout pipeline_layout;
     VkPipeline pipeline;
 
-    VkViewport viewport;
 
     const std::vector<Shader> shaders;
 
@@ -26,6 +25,12 @@ public:
         bool blend = false);
 
     ~Pipeline();
+
+    inline operator VkPipeline&() { return pipeline; }
+
+    inline VkViewport& getViewport() { return viewport; }
+
+    inline VkRect2D& getScissor() { return scissor; }
 
 private:
 
