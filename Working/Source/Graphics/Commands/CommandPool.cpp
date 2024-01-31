@@ -1,6 +1,7 @@
 #include "CommandPool.hpp"
 #include "QueueUtils.hpp"
 #include <stdexcept>
+#include <iostream>
 CommandPool::CommandPool(const GraphicsContext& context, Swapchain& swapchain) 
     : context(context), swapchain(swapchain)
 {
@@ -21,10 +22,6 @@ CommandPool::CommandPool(const GraphicsContext& context, Swapchain& swapchain)
 }
 
 CommandPool::~CommandPool() {
-    for (VkCommandBuffer command_buffer : command_buffers) {
-        vkFreeCommandBuffers(context.getLogicalDevice(), command_pool, 1, &command_buffer);
-    }
-
     vkDestroyCommandPool(context.getLogicalDevice(), command_pool, nullptr);
 }
 

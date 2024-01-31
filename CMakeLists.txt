@@ -50,6 +50,7 @@ include_directories(./Working/Source/Graphics/Swapchain)
 include_directories(./Working/Source/Graphics/Commands)
 include_directories(./Working/Source/Debug)
 include_directories(./Working/)
+include_directories(./Working/Source/Utils)
 
 if(WIN32)
 	include_directories(C:/glfw-3.3.9.bin.WIN64/include C:/VulkanSDK/1.3.275.0/Include)
@@ -79,6 +80,7 @@ aux_source_directory(./Working/Source/Graphics/Commands SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Frames SOURCE_FILES)
 aux_source_directory(./Working/Source/Debug SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Swapchain SOURCE_FILES)
+
 
 
 add_executable(Meadow ${SOURCE_FILES})

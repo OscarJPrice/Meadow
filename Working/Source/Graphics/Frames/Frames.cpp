@@ -1,13 +1,19 @@
 #include "Frames.hpp"
+#include "Config.h"
 #include <stdexcept>
+#include <iostream>
+
 
 Frames::Frames(const GraphicsContext& context, Swapchain& swapchain, 
     Pipeline& pipeline) : 
     context(context), swapchain(swapchain), pipeline(pipeline), current_frame(0)
 {
+    command_pools.reserve(CONSTANTS::FRAMES_IN_FLIGHT);
+    for (uint32_t i = 0; i < CONSTANTS::FRAMES_IN_FLIGHT; i++) {
+        command_pools.emplace_back(context, swapchain);
+        command_pools[i].createCommandBuffer();
+    }
     createSyncObjs();
-    command_pools.emplace_back(context, swapchain);
-    command_pools[0].createCommandBuffer();
 }
 
 Frames::~Frames() {
@@ -16,7 +22,7 @@ Frames::~Frames() {
 }
 
 void Frames::cleanup() {
-    for (uint32_t i = 0; i < 1; i++) {
+    for (uint32_t i = 0; i < CONSTANTS::FRAMES_IN_FLIGHT; i++) {
         vkDestroySemaphore(context.getLogicalDevice(), image_available[i], nullptr);
         vkDestroySemaphore(context.getLogicalDevice(), render_finished[i], nullptr);
         vkDestroyFence(context.getLogicalDevice(), frame_rendered_fence[i], nullptr);
@@ -24,9 +30,9 @@ void Frames::cleanup() {
 }
 
 void Frames::createSyncObjs() {
-    image_available.resize(1);
-    render_finished.resize(1);
-    frame_rendered_fence.resize(1);
+    image_available.resize(CONSTANTS::FRAMES_IN_FLIGHT);
+    render_finished.resize(CONSTANTS::FRAMES_IN_FLIGHT);
+    frame_rendered_fence.resize(CONSTANTS::FRAMES_IN_FLIGHT);
     VkSemaphoreCreateInfo semaphore_create_info = {
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
         
@@ -37,7 +43,7 @@ void Frames::createSyncObjs() {
         .flags = VK_FENCE_CREATE_SIGNALED_BIT
     };
 
-    for (uint32_t i = 0; i < 1; i++) {
+    for (uint32_t i = 0; i < CONSTANTS::FRAMES_IN_FLIGHT; i++) {
         if (vkCreateSemaphore(context.getLogicalDevice(), &semaphore_create_info, nullptr, 
                 &image_available[i]) ||
             vkCreateSemaphore(context.getLogicalDevice(), &semaphore_create_info, nullptr, 
@@ -50,23 +56,18 @@ void Frames::createSyncObjs() {
     }
 }
 
-void Frames::resetSyncObjs() {
-    vkResetFences(context.getLogicalDevice(), (uint32_t)frame_rendered_fence.size(), 
-        frame_rendered_fence.data());
-}
-
 void Frames::drawFrame() {
     vkWaitForFences(context.getLogicalDevice(), 1, 
         &frame_rendered_fence[current_frame], VK_TRUE, UINT64_MAX);
 
-    resetSyncObjs();
+    vkResetFences(context.getLogicalDevice(), 1, &frame_rendered_fence[current_frame]);
 
     uint32_t image_index;
     vkAcquireNextImageKHR(context.getLogicalDevice(), swapchain, UINT64_MAX, 
         image_available[current_frame], VK_NULL_HANDLE, &image_index);
     
-    vkResetCommandBuffer(command_pools[0].getCommandBuffer(0), 0);
-    command_pools[0].beginCommandBuffer(0, image_index, pipeline);
+    vkResetCommandBuffer(command_pools[current_frame].getCommandBuffer(0), 0);
+    command_pools[current_frame].beginCommandBuffer(0, image_index, pipeline);
 
     const VkPipelineStageFlags wait_stages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
@@ -76,7 +77,7 @@ void Frames::drawFrame() {
         .pWaitSemaphores = &image_available[current_frame],
         .pWaitDstStageMask = &wait_stages,
         .commandBufferCount = 1,
-        .pCommandBuffers = &command_pools[0].getCommandBuffer(0),
+        .pCommandBuffers = &command_pools[current_frame].getCommandBuffer(0),
         .signalSemaphoreCount = 1,
         .pSignalSemaphores = &render_finished[current_frame]
     };
@@ -95,7 +96,7 @@ void Frames::drawFrame() {
     };
 
     vkQueuePresentKHR(context.getPresentQueue(), &present_info);
-    //current_frame = (current_frame + 1) * (current_frame+1 < N);
+    current_frame = (current_frame + 1) * (current_frame+1 < CONSTANTS::FRAMES_IN_FLIGHT);
 
     
 }
