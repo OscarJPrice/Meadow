@@ -25,4 +25,21 @@ public:
     static std::ofstream unexpected; /**< Output stream for unexpected logs. */
 };
 
+#ifdef NDEBUG
+#define LogTime(s, var) s; /** Macro for logging execution time in release mode. */
+#else
+
+/**
+ * @def time(s, var)
+ * @brief Macro for logging execution time in debug mode.
+ * @param s The code to be executed.
+ * @param var The variable to store the execution time.
+ */
+#define time(s, var) \
+        auto start = std::chrono::high_resolution_clock::now(); \
+        s; \
+        std::chrono::duration<double> elapsed = std::chrono::high_resolution_clock::now() - start; \
+        var = elapsed.count();
+#endif
+
 #endif

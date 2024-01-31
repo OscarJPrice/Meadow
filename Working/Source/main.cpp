@@ -7,11 +7,8 @@
 #include "CommandPool.hpp"
 #include "Frames.hpp"
 #include "Config.h"
-#include "Tracking.hpp"
 
 int main() {
-	int width = 800;
-	track("main", width);
 	GraphicsContext gc("Meadow");
 	Swapchain sc(gc);
 	RenderPass rp (gc.getLogicalDevice(), sc.getFormat());
