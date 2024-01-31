@@ -48,7 +48,7 @@ include_directories(./Working/Source/Graphics/Pipeline)
 include_directories(./Working/Source/Graphics/Frames)
 include_directories(./Working/Source/Graphics/Swapchain)
 include_directories(./Working/Source/Graphics/Commands)
-include_directories(./Working/Source/Logging)
+include_directories(./Working/Source/Debug)
 include_directories(./Working/)
 
 if(WIN32)
@@ -77,7 +77,7 @@ aux_source_directory(./Working/Source/Graphics/Environment SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Pipeline SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Commands SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Frames SOURCE_FILES)
-aux_source_directory(./Working/Source/Logging SOURCE_FILES)
+aux_source_directory(./Working/Source/Debug SOURCE_FILES)
 aux_source_directory(./Working/Source/Graphics/Swapchain SOURCE_FILES)
 
 

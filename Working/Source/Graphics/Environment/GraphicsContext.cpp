@@ -6,7 +6,7 @@
 
 #include <stdexcept>
 #include <set>
-#include "Logging/Logging.hpp"
+#include "Debug/Logging.hpp"
 #include "ansi.h"
 #include "QueueUtils.hpp"
 #include "Config.h"

@@ -28,6 +28,13 @@ CommandPool::~CommandPool() {
     vkDestroyCommandPool(context.getLogicalDevice(), command_pool, nullptr);
 }
 
+CommandPool::CommandPool(const CommandPool& other) :
+	command_pool(other.command_pool),
+    context(other.context),
+	swapchain(other.swapchain),
+    command_buffers(other.command_buffers)
+{}
+
 void CommandPool::createCommandBuffer(VkCommandBufferLevel level) {
     VkCommandBuffer command_buffer;
 

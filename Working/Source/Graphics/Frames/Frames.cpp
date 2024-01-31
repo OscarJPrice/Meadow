@@ -1,4 +1,5 @@
 #include "Frames.hpp"
+#include <stdexcept>
 
 Frames::Frames(const GraphicsContext& context, Swapchain& swapchain, 
     Pipeline& pipeline) : 
@@ -50,7 +51,7 @@ void Frames::createSyncObjs() {
 }
 
 void Frames::resetSyncObjs() {
-    vkResetFences(context.getLogicalDevice(), frame_rendered_fence.size(), 
+    vkResetFences(context.getLogicalDevice(), (uint32_t)frame_rendered_fence.size(), 
         frame_rendered_fence.data());
 }
 

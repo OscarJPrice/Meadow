@@ -18,6 +18,8 @@ public:
 
     ~CommandPool();
 
+    CommandPool(const CommandPool&);
+
     void createCommandBuffer(VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
     void beginCommandBuffer(uint32_t command_buffer, uint32_t image_index, Pipeline& pipeline);

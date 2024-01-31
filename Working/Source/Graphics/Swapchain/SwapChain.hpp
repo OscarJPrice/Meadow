@@ -10,7 +10,7 @@
 /**
  * @brief Class for managing the swap chain
  * 
- */
+ */ 
 class Swapchain {
     VkSwapchainKHR swapchain;
     const VkDevice& logical_device;
