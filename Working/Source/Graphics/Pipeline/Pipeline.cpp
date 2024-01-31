@@ -1,5 +1,6 @@
 #include "Pipeline.hpp"
 #include "Config.h"
+#include <stdexcept>
 
 Pipeline::Pipeline(
     const GraphicsContext& graphics_context, 

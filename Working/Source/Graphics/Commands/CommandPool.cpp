@@ -1,6 +1,6 @@
 #include "CommandPool.hpp"
 #include "QueueUtils.hpp"
-
+#include <stdexcept>
 CommandPool::CommandPool(const GraphicsContext& context, Swapchain& swapchain) 
     : context(context), swapchain(swapchain)
 {

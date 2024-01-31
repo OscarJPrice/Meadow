@@ -104,6 +104,10 @@ void Swapchain::createSwapChain() {
     if (vkCreateSwapchainKHR(logical_device, &create_info, nullptr, &swapchain)) {
         throw std::runtime_error(RED_FG_BRIGHT "[ERROR] " WHITE_FG_BRIGHT "Swapchain.cpp " ANSI_NORMAL "failed to create swap chain!");
     }
+
+    vkGetSwapchainImagesKHR(logical_device, swapchain, &image_count, nullptr);
+    images.resize(image_count);
+    vkGetSwapchainImagesKHR(logical_device, swapchain, &image_count, images.data());    
     
 }
 
@@ -232,7 +236,7 @@ VkSurfaceFormatKHR Swapchain::chooseSwapSurfaceFormat(const std::vector<VkSurfac
 VkPresentModeKHR Swapchain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& available_present_modes) {
 	VkPresentModeKHR best_mode = VK_PRESENT_MODE_FIFO_KHR;
 	for (const auto& mode : available_present_modes) {
-		if (mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+		if (mode == VK_PRESENT_MODE_MAILBOX_KHR) {
 			best_mode = mode;
             break;
 		}
