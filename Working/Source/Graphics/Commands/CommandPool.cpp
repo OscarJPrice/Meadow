@@ -62,7 +62,9 @@ void CommandPool::beginCommandBuffer(uint32_t command_buffer, uint32_t image_ind
         .renderArea = {
             .offset = {0, 0},
             .extent = swapchain.getExtent()
-        }
+        },
+        .clearValueCount = 1,
+        .pClearValues = &swapchain.getClearValue()
     };
 
     vkCmdBeginRenderPass(command_buffers[command_buffer], &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);

@@ -174,9 +174,9 @@ void Swapchain::cleanup() {
         vkDestroyImageView(graphics_context.getLogicalDevice(), image_view, nullptr);
     }
     
-    for (auto& image : images) {
-        vkDestroyImage(logical_device, image, nullptr);
-    } 
+    // for (auto& image : images) {
+    //     vkDestroyImage(logical_device, image, nullptr);
+    // } 
 
     vkDestroySwapchainKHR(logical_device, swapchain, nullptr);
 }
