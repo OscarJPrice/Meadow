@@ -22,7 +22,10 @@ public:
 
     void beginCommandBuffer(uint32_t command_buffer, uint32_t image_index, Pipeline& pipeline);
 
-    void draw();
+    inline VkCommandBuffer& getCommandBuffer(uint32_t index) { return command_buffers[index]; }
+
+    
+
 };
 
 

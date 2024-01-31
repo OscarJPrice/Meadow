@@ -5,6 +5,7 @@
 #include "Pipeline.hpp"
 #include "Shader.hpp"
 #include "CommandPool.hpp"
+#include "Frames.hpp"
 #include "Config.h"
 
 int main(){
@@ -19,12 +20,10 @@ int main(){
 		Shader::create(SHADER_BINARY_DIR "Shader.frag.spv", gc.getLogicalDevice(), VK_SHADER_STAGE_FRAGMENT_BIT)
 	}, false);
 
-	CommandPool cp(gc, sc);
-	cp.createCommandBuffer();
-	cp.beginCommandBuffer(0, 0, p);
+	Frames fif(gc, sc, p);
 
 	while (gc) {
-
+		fif.drawFrame();
 	}
 
 }

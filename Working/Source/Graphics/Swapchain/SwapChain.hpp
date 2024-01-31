@@ -38,6 +38,9 @@ public:
         recreate();
     }
 
+    inline operator VkSwapchainKHR&() { return swapchain; }
+    inline operator VkSwapchainKHR*() { return &swapchain; }
+
     inline const VkFormat& getFormat() { return image_format; }
 
     inline VkRenderPass& getRenderPass() { return *render_pass; }
