@@ -7,6 +7,7 @@
 #include "Viewport.hpp"
 #include "Shader.hpp"
 
+
 class Pipeline : public Viewport {
     const GraphicsContext& graphics_context;
     Swapchain& swapchain;
@@ -15,13 +16,13 @@ class Pipeline : public Viewport {
     VkPipeline pipeline;
 
 
-    const std::vector<Shader> shaders;
+    const ShaderCollection& shaders;
 
 public:
 
     Pipeline(const GraphicsContext& graphics_context, 
         Swapchain& swapchain, 
-        std::vector<Shader> shaders,
+        ShaderCollection& shaders,
         bool blend = false);
 
     ~Pipeline();

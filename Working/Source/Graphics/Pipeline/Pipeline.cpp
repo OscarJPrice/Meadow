@@ -5,7 +5,7 @@
 Pipeline::Pipeline(
     const GraphicsContext& graphics_context, 
     Swapchain& swapchain, 
-    std::vector<Shader> shaders,
+    ShaderCollection& shaders,
     bool blend) :
     Pipeline::Viewport(swapchain.getExtent()),
     graphics_context(graphics_context), 
@@ -13,11 +13,11 @@ Pipeline::Pipeline(
     shaders(shaders)
 {
     std::vector<VkPipelineShaderStageCreateInfo> shader_stages;
-    for (auto& shader : shaders) {
+    for (int i = 0; i < shaders.size; i++) {
         VkPipelineShaderStageCreateInfo shader_stage_create_info {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            .stage = shader.stage,
-            .module = shader.shader,
+            .stage = shaders[i].stage,
+            .module = shaders[i].shader,
             .pName = "main"
         };
         shader_stages.emplace_back(shader_stage_create_info);
@@ -121,9 +121,6 @@ Pipeline::Pipeline(
 }
 
 Pipeline::~Pipeline() {
-    for (auto& shader : shaders) {
-        Shader::destroy(shader.shader, graphics_context.getLogicalDevice());
-    }
     vkDestroyPipeline(graphics_context.getLogicalDevice(), pipeline, nullptr);
     vkDestroyPipelineLayout(graphics_context.getLogicalDevice(), pipeline_layout, nullptr);
 }

@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <vector>
 #include <iostream>
-#include "Logging.hpp"
 
 Shader Shader::create(
     const char* filename, 
@@ -30,6 +29,8 @@ Shader Shader::create(
         throw std::runtime_error("Failed to create shader module");
     }
 
+    shader.device = &device;
+
     shader.stage = stage;
 
     return shader;
@@ -37,4 +38,12 @@ Shader Shader::create(
 
 void Shader::destroy(const VkShaderModule& shader, const VkDevice& device) {
     vkDestroyShaderModule(device, shader, nullptr);
+}
+
+ShaderCollection::ShaderCollection(int size) : collection(size) {}
+
+ShaderCollection::~ShaderCollection() {
+    for (int i = 0; i < size; i++) {
+        Shader::destroy(data[i].shader, *data[i].device);
+    }
 }
