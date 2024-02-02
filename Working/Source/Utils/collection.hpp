@@ -1,6 +1,15 @@
 #ifndef _MEADOW_COLLECTION_HPP_
 #define _MEADOW_COLLECTION_HPP_
 
+/**
+ * @brief A template class representing a collection of elements.
+ * 
+ * This class provides basic functionality for managing a collection of elements.
+ * It supports operations such as accessing elements by index, copying collections,
+ * and freeing allocated memory.
+ * 
+ * @tparam T The type of elements stored in the collection.
+ */
 template <typename T>
 class collection {
 

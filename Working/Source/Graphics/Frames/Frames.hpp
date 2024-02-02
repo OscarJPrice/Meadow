@@ -8,6 +8,12 @@
 #include "CommandPool.hpp"
 
 
+/**
+ * @brief The Frames class represents a collection of frames used for rendering graphics.
+ * 
+ * This class manages synchronization objects, such as semaphores and fences, 
+ * as well as command pools for each frame. It provides functionality to draw a frame.
+ */
 class Frames {
     const GraphicsContext& context;
     Swapchain& swapchain;
@@ -24,7 +30,7 @@ public:
 
     ~Frames();
 
-    void drawFrame();
+    void drawFrame(); //Draw the bloody frame to the screen!
     
 private:
     void createSyncObjs();
