@@ -1,28 +1,41 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#include <vector>
+#include <array>
 #include <vulkan/vulkan.h>
 namespace CONSTANTS {
 
-    const std::vector<const char*> VALIDATION_LAYERS {
-        "VK_LAYER_KHRONOS_validation"
-    };
-
-    const std::vector<const char*> DEVICE_EXTENSIONS {
-    #ifdef __APPLE__
-        "VK_KHR_portability_subset",
-    #endif
-        "VK_KHR_swapchain"
-    };
-
 #ifdef NDEBUG
     const bool DEBUG_MODE = false;
+
+    const std::array<const char*, 0> VALIDATION_LAYERS {
+    };
+
 #else
+    const std::array<const char*, 1> VALIDATION_LAYERS {
+        "VK_LAYER_KHRONOS_validation"
+    };
+    
     const bool DEBUG_MODE = true;
+
+    
 #endif
 
-    const std::vector<VkDynamicState> DYNAMIC_STATES {
+    const std::array<const char*, 2> DEVICE_EXTENSIONS {
+        #ifdef __APPLE__
+            "VK_KHR_portability_subset",
+        #endif
+            "VK_KHR_swapchain"
+    };
+
+
+#ifdef __APPLE__
+    const VkInstanceCreateFlagBits INSTANCE_FLAGS = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+#else
+    const VkInstanceCreateFlagBits INSTANCE_FLAGS = 0;
+#endif
+
+    const std::array<VkDynamicState, 3> DYNAMIC_STATES {
         VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR,
         VK_DYNAMIC_STATE_LINE_WIDTH

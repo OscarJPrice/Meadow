@@ -3,8 +3,7 @@
  * @brief Header file for the Logging module.
  */
 
-#ifndef LOGGING_HPP
-#define LOGGING_HPP
+#pragma once
 
 #include <fstream>
 #include <string>
@@ -28,7 +27,6 @@ public:
 #ifdef NDEBUG
 #define LogTime(s, var) s; /** Macro for logging execution time in release mode. */
 #else
-
 /**
  * @def time(s, var)
  * @brief Macro for logging execution time in debug mode.
@@ -40,6 +38,4 @@ public:
         s; \
         std::chrono::duration<double> elapsed = std::chrono::high_resolution_clock::now() - start; \
         var = elapsed.count();
-#endif
-
 #endif

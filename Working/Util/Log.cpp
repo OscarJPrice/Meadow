@@ -1,4 +1,4 @@
-#include "Logging.hpp"
+#include "Log.hpp"
 #include "Config.h"
 #include <filesystem>
 
