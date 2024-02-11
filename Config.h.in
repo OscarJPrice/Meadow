@@ -1,25 +1,21 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
-
 #include <array>
 #include <vulkan/vulkan.h>
+
+
+
 namespace CONSTANTS {
-
-#ifdef NDEBUG
-    const bool DEBUG_MODE = false;
-
-    const std::array<const char*, 0> VALIDATION_LAYERS {
+    const char* const APP_NAME = "Meadow!";
+    const uint32_t APP_VERSION = VK_MAKE_VERSION(1, 0, 0);
+    const char* const ENGINE_NAME = "EMEAD Engine";
+    const uint32_t ENGINE_VERSION = VK_MAKE_VERSION(0, 0, 0);
+    const std::array<VkDynamicState, 3> DYNAMIC_STATES {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR,
+        VK_DYNAMIC_STATE_LINE_WIDTH
     };
-
-#else
-    const std::array<const char*, 1> VALIDATION_LAYERS {
-        "VK_LAYER_KHRONOS_validation"
-    };
-    
-    const bool DEBUG_MODE = true;
-
-    
-#endif
+    const uint32_t FRAMES_IN_FLIGHT = 2;
 
     const std::array<const char*, 2> DEVICE_EXTENSIONS {
         #ifdef __APPLE__
@@ -28,20 +24,23 @@ namespace CONSTANTS {
             "VK_KHR_swapchain"
     };
 
+    #ifdef NDEBUG
+        const bool DEBUG_MODE = false;
+        const std::array<const char*, 0> VALIDATION_LAYERS {};
 
-#ifdef __APPLE__
-    const VkInstanceCreateFlagBits INSTANCE_FLAGS = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
-#else
-    const VkInstanceCreateFlagBits INSTANCE_FLAGS = 0;
-#endif
+    #else
+        const bool DEBUG_MODE = true;
+        const std::array<const char*, 1> VALIDATION_LAYERS {
+            "VK_LAYER_KHRONOS_validation"
+        };
+    #endif
 
-    const std::array<VkDynamicState, 3> DYNAMIC_STATES {
-        VK_DYNAMIC_STATE_VIEWPORT,
-        VK_DYNAMIC_STATE_SCISSOR,
-        VK_DYNAMIC_STATE_LINE_WIDTH
-    };
 
-    const uint32_t FRAMES_IN_FLIGHT = 2;
+    #ifdef __APPLE__
+        const VkInstanceCreateFlagBits INSTANCE_FLAGS = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+    #else
+        const VkInstanceCreateFlagBits INSTANCE_FLAGS = 0;
+    #endif
 
 }
 

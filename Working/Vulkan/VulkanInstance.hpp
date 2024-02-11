@@ -6,12 +6,15 @@
 #include <vector>
 #include "DebugCallback.hpp"
 #include "Config.h"
+#include <iostream>
 
-inline static std::vector<const char*> getRequiredExtensions() { // Used once
+inline std::vector<const char*> getRequiredExtensions() {
+    glfwInit();
     // Get the required instance extensions using glfwGetRequiredInstanceExtensions()
     uint32_t glfw_extension_count;
     const char** glfw_extensions =
         glfwGetRequiredInstanceExtensions(&glfw_extension_count);
+
     std::vector<const char*> extensions(glfw_extensions, glfw_extensions + glfw_extension_count);
 
     #ifdef __APPLE__ 
@@ -27,17 +30,16 @@ inline static std::vector<const char*> getRequiredExtensions() { // Used once
 
     // Return the vector of required extensions
     return extensions;
-
 }
-static std::vector<const char*> const extensions = getRequiredExtensions();
+const std::vector<const char*> extensions = getRequiredExtensions();
 
 const static VkApplicationInfo applicationInfo = {
     .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
     .pNext = nullptr,
-    .pApplicationName = "Meadow!",
-    .applicationVersion = VK_MAKE_VERSION(0, 0, 1),
-    .pEngineName = "Vulkan-Instance",
-    .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+    .pApplicationName = CONSTANTS::APP_NAME,
+    .applicationVersion = CONSTANTS::ENGINE_VERSION,
+    .pEngineName = CONSTANTS::ENGINE_NAME,
+    .engineVersion = CONSTANTS::ENGINE_VERSION,
     .apiVersion = VK_API_VERSION_1_3
 };
 
@@ -54,10 +56,11 @@ const static VkInstanceCreateInfo instanceCreateInfo = {
 
 
 struct VulkanInstance {
-    VkInstance instance;
+    
+    VkInstance vk_instance;
     VkDebugUtilsMessengerEXT debug_messenger;
 
-    static VulkanInstance create();
+    VulkanInstance();
 
     ~VulkanInstance();
 };

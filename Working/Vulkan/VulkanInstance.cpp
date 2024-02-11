@@ -4,34 +4,33 @@
 #include <cstring>
 #include <iostream>
 
+
 //forward declarations for tidyness
 bool checkValidationLayerSupport();
 bool checkExtensionsSupport(const std::vector<const char*>& extensions);
 
-VulkanInstance VulkanInstance::create()
-{
-    VulkanInstance new_instance;
+VulkanInstance::VulkanInstance() {
 
     ATTEMPT_BOOL(!CONSTANTS::DEBUG_MODE || checkValidationLayerSupport());
+
     ATTEMPT_BOOL(checkExtensionsSupport(extensions));
 
-    ATTEMPT_VK(vkCreateInstance(&instanceCreateInfo, nullptr, &new_instance.instance));
+    ATTEMPT_VK(vkCreateInstance(&instanceCreateInfo, nullptr, &vk_instance));
 
     if (CONSTANTS::DEBUG_MODE) {
-        ATTEMPT_VK(DebugCallback::create(new_instance.instance, nullptr, 
-            new_instance.debug_messenger));
+        ATTEMPT_VK(DebugCallback::create(vk_instance, nullptr, 
+            debug_messenger));
     }
-
-    return new_instance;
 }
 
 
 VulkanInstance::~VulkanInstance()
 {
     if (CONSTANTS::DEBUG_MODE) {
-        DebugCallback::destroy(instance, nullptr, debug_messenger);
+        DebugCallback::destroy(vk_instance, nullptr, debug_messenger);
     }
-    vkDestroyInstance(instance, nullptr);
+    vkDestroyInstance(vk_instance, nullptr);
+    glfwTerminate();
 }
 
 /**
@@ -67,6 +66,7 @@ bool checkValidationLayerSupport() {
     // All validation layers are supported, return true
     return true;
 }
+
 bool checkExtensionsSupport(const std::vector<const char*>& extensions) {
 
     // Retrieve the available instance extensions
