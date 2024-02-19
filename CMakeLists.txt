@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(Meadow VERSION 0.1.0 LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 add_compile_options(-Wall -fstack-protector -Wextra -Wpedantic -Werror 
   -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function 
   -Wno-unused-but-set-variable -Wno-unused-value -Wno-unused-local-typedefs
@@ -53,5 +53,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.h.in ${CMAKE_CURRENT_SOURCE_DI
   include_directories(Working/Vulkan)
   include_directories(Working/Util)
 # End Include Directories Section
+
+set_target_properties(
+  Meadow PROPERTIES
+  CXX_CLANG_TIDY "clang-tidy;-checks=performance-*,-llvmlibc-callee-namespace"
+)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/logs")

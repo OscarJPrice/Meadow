@@ -14,9 +14,12 @@ public:
     ShaderModule(const char* name, const VkShaderStageFlagBits& stage, 
         const VulkanDevice* device);
 
-    ShaderModule(const ShaderModule& other);
+    ShaderModule(ShaderModule&& other) noexcept;
+
+    ShaderModule& operator=(ShaderModule&& other) noexcept;
 
     ~ShaderModule();
+
 };
 
 struct Shaders {
@@ -24,7 +27,7 @@ struct Shaders {
     static std::unordered_map<std::string, ShaderModule> all;
 
     inline static void add(const std::string& name, ShaderModule& shader) {
-        all.emplace(std::make_pair(std::move(name), std::move(shader)));
+        all.emplace(std::make_pair(name, std::move(shader)));
     }
 
     inline static void loadShaders(const VulkanDevice& device) {

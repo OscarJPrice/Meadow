@@ -1,14 +1,15 @@
 #pragma once
 #include <optional>
 #include <vulkan/vulkan.h>
+#include "ModernTypes.h"
 /**
  * @brief Namespace for queue utilities
  * 
  */
 namespace QueueUtils {
     struct QueueFamilyIndices {
-        std::optional<uint32_t> graphics_family;
-        std::optional<uint32_t> present_family;
+        std::optional<u32> graphics_family;
+        std::optional<u32> present_family;
 
         /**
          * @brief Check if the queue families are complete

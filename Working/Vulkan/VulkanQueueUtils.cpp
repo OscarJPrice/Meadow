@@ -16,12 +16,12 @@ QueueUtils::QueueFamilyIndices QueueUtils::findQueueFamilies(
     QueueFamilyIndices indices{}; // Create an instance of QueueFamilyIndices struct
 
     {
-        uint32_t queue_family_count = 0; // Variable to store the number of queue families
+        u32 queue_family_count = 0; // Variable to store the number of queue families
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, nullptr); // Get the number of queue families supported by the physical device
         std::vector<VkQueueFamilyProperties> queue_families(queue_family_count); // Create a vector to store the properties of each queue family
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, queue_families.data()); // Get the properties of each queue family
 
-        uint32_t i = 0; // Counter for iterating through the queue families
+        u32 i = 0; // Counter for iterating through the queue families
         for (const auto& queue_family : queue_families) {
             VkBool32 present_support = false; // Variable to store whether the queue family supports presentation to the surface
             vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &present_support); // Check if the queue family supports presentation to the surface

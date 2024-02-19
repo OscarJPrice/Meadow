@@ -1,7 +1,8 @@
+#include <iostream>
 #include "DebugCallback.hpp"
 #include "Log.hpp"
 #include "ansi.h"
-#include <iostream>
+#include "ModernTypes.h"
 
 
 static void post(std::ostream& stream, const char* message, 
@@ -21,10 +22,10 @@ static void post(std::ostream& stream, const char* message,
             stream << "[PERFORMANCE]: ";
             break;
     }
-    stream << p_callback_data->pMessage << std::endl;
-    for (uint32_t i = 0; i < p_callback_data->objectCount; i++) {
+    stream << p_callback_data->pMessage << '\n';
+    for (u32 i = 0; i < p_callback_data->objectCount; i++) {
         if (p_callback_data->pObjects[i].pObjectName) {
-            stream << p_callback_data->pObjects[i].pObjectName << std::endl;
+            stream << p_callback_data->pObjects[i].pObjectName << '\n';
         }
     }
 }

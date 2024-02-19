@@ -2,15 +2,26 @@
 #include <vulkan/vulkan.h>
 #include "VulkanInstance.hpp"
 #include "VulkanSurface.hpp"
+#include "VulkanSwapchainSupportDetails.h"
 
 class VulkanDevice {
 public:
-    VkPhysicalDevice physical_device;
+    const VulkanSurface& surface;
 
-    VkDevice logical_device;
+    VkPhysicalDevice vk_physical_device;
+    VkDevice vk_logical_device;
     VkQueue present_queue;
+
+
 
     VulkanDevice(VulkanInstance& instance, VulkanSurface& surface);
     ~VulkanDevice();
+
+    static SwapchainSupportDetails querySwapchainSupport(const VkPhysicalDevice& device, 
+        const VkSurfaceKHR& surface);
+
+    inline SwapchainSupportDetails querySwapchainSupport() const {
+        return querySwapchainSupport(vk_physical_device, surface.vk_surface);
+    };
 
 };

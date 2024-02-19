@@ -1,8 +1,8 @@
+#include <cstring>
+#include <iostream>
 #include "VulkanInstance.hpp"
 #include "Debug-Macros.hpp"
 #include "Config.h"
-#include <cstring>
-#include <iostream>
 
 
 //forward declarations for tidyness
@@ -43,7 +43,7 @@ bool checkValidationLayerSupport() {
     // Retrieve the available instance layers
     std::vector<VkLayerProperties> available_layers;
     {
-        uint32_t layer_count = 0;
+        u32 layer_count = 0;
         vkEnumerateInstanceLayerProperties(&layer_count, nullptr);
         available_layers.resize(layer_count);
         vkEnumerateInstanceLayerProperties(&layer_count, available_layers.data()); 
@@ -72,7 +72,7 @@ bool checkExtensionsSupport(const std::vector<const char*>& extensions) {
     // Retrieve the available instance extensions
     std::vector<VkExtensionProperties> available_extensions;
     {
-        uint32_t extension_count = 0;
+        u32 extension_count = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
 
         available_extensions.resize(extension_count);

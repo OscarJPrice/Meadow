@@ -4,14 +4,16 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 #include <vector>
+#include <iostream>
 #include "DebugCallback.hpp"
 #include "Config.h"
-#include <iostream>
+#include "ModernTypes.h"
+
 
 inline std::vector<const char*> getRequiredExtensions() {
     glfwInit();
     // Get the required instance extensions using glfwGetRequiredInstanceExtensions()
-    uint32_t glfw_extension_count;
+    u32 glfw_extension_count;
     const char** glfw_extensions =
         glfwGetRequiredInstanceExtensions(&glfw_extension_count);
 
@@ -50,7 +52,7 @@ const static VkInstanceCreateInfo instanceCreateInfo = {
     .pApplicationInfo = &applicationInfo,
     .enabledLayerCount = CONSTANTS::VALIDATION_LAYERS.size(),
     .ppEnabledLayerNames = CONSTANTS::VALIDATION_LAYERS.data(),
-    .enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
+    .enabledExtensionCount = static_cast<u32>(extensions.size()),
     .ppEnabledExtensionNames = extensions.data()
 };
 

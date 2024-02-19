@@ -1,8 +1,8 @@
-
-#include "Shaders.hpp"
 #include <fstream>
+#include "Shaders.hpp"
 #include "Debug-Macros.hpp"
 #include "iostream"
+#include "ModernTypes.h"
 
 ShaderModule::ShaderModule(const char* filename, const VkShaderStageFlagBits& stage, 
     const VulkanDevice* device) :
@@ -16,22 +16,35 @@ ShaderModule::ShaderModule(const char* filename, const VkShaderStageFlagBits& st
     VkShaderModuleCreateInfo shader_create_info {
         .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
         .codeSize = code.size(),
-        .pCode = reinterpret_cast<const uint32_t*>(code.data())
+        .pCode = reinterpret_cast<const u32*>(code.data())
     };
-    ATTEMPT_VK(vkCreateShaderModule(device->logical_device, &shader_create_info, 
+    ATTEMPT_VK(vkCreateShaderModule(device->vk_logical_device, &shader_create_info, 
         nullptr, &shader));
 }
 
-ShaderModule::ShaderModule(const ShaderModule& other) :
-    device(other.device), name(other.name), shader(other.shader), stage(other.stage)
+ShaderModule::ShaderModule(ShaderModule&& other) noexcept:
+    device(other.device),
+    name(other.name),
+    shader(other.shader),
+    stage(other.stage)
 {
-    //Unsafe, but let's move on to another subject!
-    const_cast<VkShaderModule&>(other.shader) = VK_NULL_HANDLE;
+    other.shader = VK_NULL_HANDLE;
 }
+
+ShaderModule& ShaderModule::operator=(ShaderModule&& other) noexcept
+{
+    device = other.device;
+    name = other.name;
+    stage = other.stage;
+    shader = other.shader;
+    other.shader = VK_NULL_HANDLE;
+    return *this;
+}
+
 
 ShaderModule::~ShaderModule() {
     if (shader != VK_NULL_HANDLE)
-        vkDestroyShaderModule(device->logical_device, shader, nullptr);
+        vkDestroyShaderModule(device->vk_logical_device, shader, nullptr);
 }
 
 std::unordered_map<std::string, ShaderModule> Shaders::all;
