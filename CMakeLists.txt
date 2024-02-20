@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 23)
 add_compile_options(-Wall -fstack-protector -Wextra -Wpedantic -Werror 
   -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function 
   -Wno-unused-but-set-variable -Wno-unused-value -Wno-unused-local-typedefs
-  -Wno-unknown-pragmas -Wno-ignored-qualifiers)
+  -Wno-unknown-pragmas -Wno-ignored-qualifiers -g)
 
 # Shader Section
   find_program(GLSLC_EXECUTABLE NAMES glslc REQUIRED)
@@ -30,7 +30,7 @@ add_compile_options(-Wall -fstack-protector -Wextra -Wpedantic -Werror
 
 find_package(glfw3 REQUIRED)
 link_directories(${GLFW_LIBRARIES})
-message(STATUS "GLFW Found: ${GLFW_LIBRARIES}")
+message(STATUS "GLFW Found.")
 
 find_package(Vulkan REQUIRED)
 message(STATUS "Vulkan Found: ${Vulkan_LIBRARIES}")

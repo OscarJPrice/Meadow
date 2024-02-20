@@ -47,4 +47,14 @@ ShaderModule::~ShaderModule() {
         vkDestroyShaderModule(device->vk_logical_device, shader, nullptr);
 }
 
+VkPipelineShaderStageCreateInfo ShaderModule::shader_stage_info(const char* name) const {
+    VkPipelineShaderStageCreateInfo shader_stage_info {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .stage = stage,
+        .module = shader,
+        .pName = name
+    };
+    return shader_stage_info;
+}
+
 std::unordered_map<std::string, ShaderModule> Shaders::all;

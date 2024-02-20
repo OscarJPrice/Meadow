@@ -6,7 +6,8 @@
 
 
 
-struct VulkanSurface {
+class VulkanSurface {
+public:
     GLFWwindow* window;
     VkSurfaceKHR vk_surface;
     const VulkanInstance& instance;

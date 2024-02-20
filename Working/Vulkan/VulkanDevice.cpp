@@ -177,14 +177,20 @@ std::pair<VkDevice, VkQueue> createLogicalDevice(VkPhysicalDevice& vk_physical_d
         queue_create_infos.push_back(queue_create_info);
     }
 
+    VkPhysicalDeviceDynamicRenderingFeatures dynamic_rendering_features {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
+        .pNext = nullptr,
+        .dynamicRendering = VK_TRUE
+    };
     VkPhysicalDeviceFeatures device_features{};
     VkDeviceCreateInfo create_info{
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        .pNext = &dynamic_rendering_features,
         .queueCreateInfoCount = static_cast<u32>(queue_create_infos.size()),
         .pQueueCreateInfos = queue_create_infos.data(),
         .enabledExtensionCount = static_cast<u32>(CONSTANTS::DEVICE_EXTENSIONS.size()),
         .ppEnabledExtensionNames = CONSTANTS::DEVICE_EXTENSIONS.data(),
-        .pEnabledFeatures = &device_features,
+        .pEnabledFeatures = &device_features
     };
 
     // Enable validation layers if in debug mode
@@ -215,5 +221,6 @@ VulkanDevice::VulkanDevice(VulkanInstance& instance, VulkanSurface& surface) :
 }
 
 VulkanDevice::~VulkanDevice() {
-    vkDestroyDevice(vk_logical_device, nullptr);
+    if (vk_logical_device != VK_NULL_HANDLE)
+        vkDestroyDevice(vk_logical_device, nullptr);
 }

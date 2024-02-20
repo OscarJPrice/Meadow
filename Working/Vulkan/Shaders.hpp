@@ -13,12 +13,13 @@ public:
 
     ShaderModule(const char* name, const VkShaderStageFlagBits& stage, 
         const VulkanDevice* device);
-
     ShaderModule(ShaderModule&& other) noexcept;
 
     ShaderModule& operator=(ShaderModule&& other) noexcept;
 
     ~ShaderModule();
+
+    VkPipelineShaderStageCreateInfo shader_stage_info(const char*) const;
 
 };
 
@@ -39,6 +40,10 @@ struct Shaders {
 
     inline static void cleanup() {
         all.clear();    
+    }
+
+    inline static const ShaderModule& get(const std::string& name) {
+        return all.at(name);
     }
 };
 

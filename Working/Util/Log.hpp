@@ -22,6 +22,14 @@ public:
     static std::ofstream warning; /**< Output stream for warning logs. */
     static std::ofstream error; /**< Output stream for error logs. */
     static std::ofstream unexpected; /**< Output stream for unexpected logs. */
+    inline static void flush() {
+        if (!initialized) init();
+        verbose.flush();
+        info.flush();
+        warning.flush();
+        error.flush();
+        unexpected.flush();
+    }
 };
 
 #ifdef NDEBUG

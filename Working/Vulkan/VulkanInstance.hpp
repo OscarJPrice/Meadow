@@ -35,17 +35,17 @@ inline std::vector<const char*> getRequiredExtensions() {
 }
 const std::vector<const char*> extensions = getRequiredExtensions();
 
-const static VkApplicationInfo applicationInfo = {
+const VkApplicationInfo applicationInfo = {
     .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
     .pNext = nullptr,
     .pApplicationName = CONSTANTS::APP_NAME,
     .applicationVersion = CONSTANTS::ENGINE_VERSION,
     .pEngineName = CONSTANTS::ENGINE_NAME,
     .engineVersion = CONSTANTS::ENGINE_VERSION,
-    .apiVersion = VK_API_VERSION_1_3
+    .apiVersion = CONSTANTS::API_VERSION
 };
 
-const static VkInstanceCreateInfo instanceCreateInfo = {
+const VkInstanceCreateInfo instanceCreateInfo = {
     .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
     .pNext = CONSTANTS::DEBUG_MODE ? &DebugCallback::create_info : nullptr,
     .flags = CONSTANTS::INSTANCE_FLAGS,
