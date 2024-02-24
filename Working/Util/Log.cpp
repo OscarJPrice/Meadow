@@ -11,12 +11,13 @@ std::ofstream Log::error;
 std::ofstream Log::unexpected;
 
 void Log::init() {
-    if (!initialized) {
-        initialized = true;
-        std::filesystem::create_directory(LOG_DIR);
-        Log::verbose.open("/Users/oscarprice/code/own_p/Meadow/logs/" "verbose.log");
-        Log::info.open(LOG_DIR "info.log");
-        Log::warning.open(LOG_DIR "warning.log");
-        Log::error.open(LOG_DIR "error.log");
-    }
+  if (!initialized) {
+    initialized = true;
+    std::filesystem::create_directory(LOG_DIR);
+    Log::verbose.open("/Users/oscarprice/code/own_p/Meadow/logs/"
+                      "verbose.log");
+    Log::info.open(LOG_DIR "info.log");
+    Log::warning.open(LOG_DIR "warning.log");
+    Log::error.open(LOG_DIR "error.log");
+  }
 }
