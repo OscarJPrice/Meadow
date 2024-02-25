@@ -2,6 +2,7 @@
 #include "VulkanInstance.hpp"
 #include "VulkanSurface.hpp"
 #include "VulkanSwapchainSupportDetails.h"
+#include "vulkan/vulkan_core.h"
 #include <vulkan/vulkan.h>
 
 class VulkanDevice {
@@ -22,4 +23,6 @@ public:
   inline SwapchainSupportDetails querySwapchainSupport() const {
     return querySwapchainSupport(vk_physical_device, surface.vk_surface);
   };
+
+  VkSurfaceFormatKHR chooseSurfaceFormat() const;
 };

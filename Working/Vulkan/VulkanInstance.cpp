@@ -2,8 +2,6 @@
 #include "Config.h"
 #include "Debug-Macros.hpp"
 #include <cstring>
-#include <iostream>
-
 // forward declarations for tidyness
 bool checkValidationLayerSupport();
 bool checkExtensionsSupport(const std::vector<const char *> &extensions);

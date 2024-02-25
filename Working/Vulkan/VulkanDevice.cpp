@@ -135,7 +135,7 @@ VkPhysicalDevice aquirePhysicalDevice(VkInstance &instance,
   vkEnumeratePhysicalDevices(instance, &count, devices.data());
 
   u32 highest_score = 0;
-  VkPhysicalDevice best_device = VK_NULL_HANDLE;
+  VkPhysicalDevice best_device = nullptr;
 
   // Iterate through each device and rate its suitability
   for (const auto &phsyical_device : devices) {
@@ -148,7 +148,7 @@ VkPhysicalDevice aquirePhysicalDevice(VkInstance &instance,
         highest_score = score;
       }
       // If the current best device is not suitable, update the best device
-      else if (best_device == VK_NULL_HANDLE ||
+      else if (best_device == nullptr ||
                !isPhysicalDeviceSuitable(best_device, surface)) {
         best_device = phsyical_device;
         highest_score = score;
@@ -157,7 +157,7 @@ VkPhysicalDevice aquirePhysicalDevice(VkInstance &instance,
   }
 
   // If no suitable device is found, throw an error
-  if (best_device == VK_NULL_HANDLE) {
+  if (best_device == nullptr) {
     throw std::runtime_error("failed to find a suitable GPU!");
   }
 
@@ -197,15 +197,10 @@ createLogicalDevice(VkPhysicalDevice &vk_physical_device,
         .pQueuePriorities = &queue_priority};
     queue_create_infos.push_back(queue_create_info);
   }
-
-  VkPhysicalDeviceDynamicRenderingFeatures dynamic_rendering_features{
-      .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
-      .pNext = nullptr,
-      .dynamicRendering = VK_TRUE};
   VkPhysicalDeviceFeatures device_features{};
   VkDeviceCreateInfo create_info{
       .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-      .pNext = &dynamic_rendering_features,
+      .pNext = nullptr,
       .queueCreateInfoCount = static_cast<u32>(queue_create_infos.size()),
       .pQueueCreateInfos = queue_create_infos.data(),
       .enabledExtensionCount =
@@ -242,6 +237,17 @@ VulkanDevice::VulkanDevice(VulkanInstance &instance, VulkanSurface &surface)
 }
 
 VulkanDevice::~VulkanDevice() {
-  if (vk_logical_device != VK_NULL_HANDLE)
+  if (vk_logical_device != nullptr)
     vkDestroyDevice(vk_logical_device, nullptr);
+}
+
+VkSurfaceFormatKHR VulkanDevice::chooseSurfaceFormat() const {
+  auto formats =
+      querySwapchainSupport(vk_physical_device, surface.vk_surface).formats;
+  auto it = std::find_if(
+      formats.begin(), formats.end(), [](const VkSurfaceFormatKHR &format) {
+        return format.format == VK_FORMAT_B8G8R8A8_SRGB &&
+               format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+      });
+  return (it == formats.end()) ? formats[0] : *it;
 }

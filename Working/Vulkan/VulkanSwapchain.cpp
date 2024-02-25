@@ -1,12 +1,11 @@
-#include <algorithm>
-#include <numeric>
-#include <ranges>
-
+#include "VulkanSwapchain.hpp"
 #include "Debug-Macros.hpp"
 #include "ModernTypes.h"
 #include "VulkanQueueUtils.hpp"
-#include "VulkanSwapchain.hpp"
+#include "VulkanRenderPass.hpp"
 #include "VulkanSwapchainSupportDetails.h"
+#include "vulkan/vulkan_core.h"
+#include <algorithm>
 
 namespace SwapUtils {
 VkExtent2D chooseExtent(GLFWwindow *window,
@@ -14,19 +13,15 @@ VkExtent2D chooseExtent(GLFWwindow *window,
   if (capabilities.currentExtent.width != std::numeric_limits<u32>::max())
     return capabilities
         .currentExtent; // The window manager has set the extent for us
-
   int width, height;
-  glfwGetFramebufferSize(window, &width,
-                         &height); // why the are these ints? lord knows!
+  glfwGetFramebufferSize(window, &width, &height);
 
   VkExtent2D extent{static_cast<u32>(width), static_cast<u32>(height)};
 
   extent.width = std::clamp(extent.width, capabilities.minImageExtent.width,
                             capabilities.maxImageExtent.width);
-
   extent.height = std::clamp(extent.height, capabilities.minImageExtent.height,
                              capabilities.maxImageExtent.height);
-
   return extent;
 }
 
@@ -36,20 +31,10 @@ VkPresentModeKHR choosePresentMode(const std::vector<VkPresentModeKHR> &modes) {
                              : VK_PRESENT_MODE_MAILBOX_KHR;
 }
 
-VkSurfaceFormatKHR
-chooseFormat(const std::vector<VkSurfaceFormatKHR> &formats) {
-  auto it = std::find_if(
-      formats.begin(), formats.end(), [](const VkSurfaceFormatKHR &format) {
-        return format.format == VK_FORMAT_B8G8R8A8_SRGB &&
-               format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-      });
-  return (it == formats.end()) ? formats[0] : *it;
-}
-
-void createImageViews(const VulkanDevice &device,
-                      const std::vector<VkImage> &images,
-                      const VkSurfaceFormatKHR &format,
-                      std::vector<VkImageView> &image_views) {
+std::vector<VkImageView> createImageViews(const VulkanDevice &device,
+                                          const std::vector<VkImage> &images,
+                                          const VkSurfaceFormatKHR &format) {
+  std::vector<VkImageView> image_views;
   for (const auto &image : images) {
     VkImageViewCreateInfo image_view_create_info{
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
@@ -69,6 +54,7 @@ void createImageViews(const VulkanDevice &device,
                                  &image_view_create_info, nullptr,
                                  &image_views.emplace_back()));
   }
+  return image_views;
 }
 
 u32 getImageCount(VkSurfaceCapabilitiesKHR capabilities) {
@@ -80,12 +66,14 @@ u32 getImageCount(VkSurfaceCapabilitiesKHR capabilities) {
 }
 } // namespace SwapUtils
 
-VulkanSwapchain::VulkanSwapchain(const VulkanDevice &device) : device(device) {
+VulkanSwapchain::VulkanSwapchain(const VulkanDevice &device,
+                                 VulkanRenderPass &render_pass)
+    : device(device), render_pass(render_pass) {
   create();
 }
 
 VulkanSwapchain::~VulkanSwapchain() {
-  if (vk_swapchain != VK_NULL_HANDLE)
+  if (vk_swapchain != nullptr)
     destroy();
 }
 
@@ -94,9 +82,6 @@ void VulkanSwapchain::create() {
   u32 image_count =
       SwapUtils::getImageCount(device.querySwapchainSupport().capabilities);
 
-  surface_format =
-      SwapUtils::chooseFormat(device.querySwapchainSupport().formats);
-
   extent = SwapUtils::chooseExtent(device.surface.window,
                                    device.querySwapchainSupport().capabilities);
 
@@ -104,8 +89,8 @@ void VulkanSwapchain::create() {
       .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
       .surface = device.surface.vk_surface,
       .minImageCount = image_count,
-      .imageFormat = surface_format.format,
-      .imageColorSpace = surface_format.colorSpace,
+      .imageFormat = device.chooseSurfaceFormat().format,
+      .imageColorSpace = device.chooseSurfaceFormat().colorSpace,
       .imageExtent = extent,
       .imageArrayLayers = 1,
       .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT};
@@ -142,12 +127,38 @@ void VulkanSwapchain::create() {
   vkGetSwapchainImagesKHR(device.vk_logical_device, vk_swapchain, &image_count,
                           images.data());
 
-  SwapUtils::createImageViews(device, images, surface_format, image_views);
+  image_views =
+      SwapUtils::createImageViews(device, images, device.chooseSurfaceFormat());
 }
 
 void VulkanSwapchain::destroy() {
-  for (const auto &image_view : image_views) {
-    vkDestroyImageView(device.vk_logical_device, image_view, nullptr);
+  for (const auto &view : image_views) {
+    vkDestroyImageView(device.vk_logical_device, view, nullptr);
+  }
+  if (frame_buffers.has_value()) {
+    for (const auto &buffer : frame_buffers.value()) {
+      vkDestroyFramebuffer(device.vk_logical_device, buffer, nullptr);
+    }
   }
   vkDestroySwapchainKHR(device.vk_logical_device, vk_swapchain, nullptr);
+}
+
+std::vector<VkFramebuffer>
+VulkanSwapchain::createFrameBuffers(const VulkanDevice &device,
+                                    VulkanSwapchain &swapchain,
+                                    VulkanRenderPass &render_pass) {
+  std::vector<VkFramebuffer> frame_buffer;
+  for (const auto &view : swapchain.image_views) {
+    VkFramebufferCreateInfo framebuffer_info = {
+        .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+        .renderPass = render_pass.vk_render_pass,
+        .attachmentCount = 1,
+        .pAttachments = &view,
+        .width = swapchain.extent.width,
+        .height = swapchain.extent.height,
+        .layers = 1};
+    ATTEMPT_VK(vkCreateFramebuffer(device.vk_logical_device, &framebuffer_info,
+                                   nullptr, &frame_buffer.emplace_back()));
+  }
+  return frame_buffer;
 }

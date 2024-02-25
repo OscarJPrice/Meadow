@@ -1,6 +1,6 @@
 #pragma once
 #include "VulkanDevice.hpp"
-#include <map>
+#include <string>
 #include <unordered_map>
 #include <vulkan/vulkan.h>
 
@@ -23,26 +23,37 @@ public:
   VkPipelineShaderStageCreateInfo shader_stage_info(const char *) const;
 };
 
-struct Shaders {
+struct ShaderView {
+  const ShaderModule *shader;
+  inline operator const ShaderModule &() const { return *shader; }
+};
 
-  static std::unordered_map<std::string, ShaderModule> all;
+class Shaders {
+  const std::unordered_map<std::string, ShaderModule> all;
 
-  inline static void add(const std::string &name, ShaderModule &shader) {
-    all.emplace(std::make_pair(name, std::move(shader)));
-  }
+public:
+  Shaders(const VulkanDevice &device);
 
-  inline static void loadShaders(const VulkanDevice &device) {
+  ~Shaders() = default;
+
+  static std::unordered_map<std::string, ShaderModule>
+  loadShaders(const VulkanDevice &device) {
+    std::unordered_map<std::string, ShaderModule> shaders;
     ShaderModule vert(SHADER_BINARY_DIR "Shader.vert.spv",
                       VK_SHADER_STAGE_VERTEX_BIT, &device);
     ShaderModule frag(SHADER_BINARY_DIR "Shader.frag.spv",
                       VK_SHADER_STAGE_FRAGMENT_BIT, &device);
-    add("vert", vert);
-    add("frag", frag);
+
+    shaders.emplace(std::make_pair("vert", std::move(vert)));
+    shaders.emplace(std::make_pair("frag", std::move(frag)));
+    return shaders;
   }
 
-  inline static void cleanup() { all.clear(); }
+  inline ShaderView operator[](const std::string &name) {
+    return {&all.at(name)};
+  }
 
-  inline static const ShaderModule &get(const std::string &name) {
-    return all.at(name);
+  template <typename... T> std::vector<ShaderView> operator[](T... shaders) {
+    return std::vector<ShaderView>(operator[](shaders...));
   }
 };

@@ -1,9 +1,8 @@
 #pragma once
-
+#ifndef NDEBUG
 #include <stdexcept>
 #include <string>
 
-#ifndef NDEBUG
 #define ATTEMPT_VK(vk_code)                                                    \
   {                                                                            \
     int result;                                                                \

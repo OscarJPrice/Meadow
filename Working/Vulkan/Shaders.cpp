@@ -24,7 +24,7 @@ ShaderModule::ShaderModule(const char *filename,
 ShaderModule::ShaderModule(ShaderModule &&other) noexcept
     : device(other.device), name(other.name), shader(other.shader),
       stage(other.stage) {
-  other.shader = VK_NULL_HANDLE;
+  other.shader = nullptr;
 }
 
 ShaderModule &ShaderModule::operator=(ShaderModule &&other) noexcept {
@@ -32,12 +32,12 @@ ShaderModule &ShaderModule::operator=(ShaderModule &&other) noexcept {
   name = other.name;
   stage = other.stage;
   shader = other.shader;
-  other.shader = VK_NULL_HANDLE;
+  other.shader = nullptr;
   return *this;
 }
 
 ShaderModule::~ShaderModule() {
-  if (shader != VK_NULL_HANDLE)
+  if (shader != nullptr)
     vkDestroyShaderModule(device->vk_logical_device, shader, nullptr);
 }
 
@@ -51,4 +51,5 @@ ShaderModule::shader_stage_info(const char *name) const {
   return shader_stage_info;
 }
 
-std::unordered_map<std::string, ShaderModule> Shaders::all;
+Shaders::Shaders(const VulkanDevice &device)
+    : all(Shaders::loadShaders(device)) {}

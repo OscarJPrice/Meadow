@@ -17,3 +17,4 @@ Logs
 **/.DS_Store
 SPIR-V/
 Working/Config.h
+compile_commands.json

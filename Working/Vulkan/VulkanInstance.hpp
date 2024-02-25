@@ -2,11 +2,9 @@
 
 #define GLFW_INCLUDE_VULKAN
 #include "Config.h"
-#include "DebugCallback.hpp"
 #include "ModernTypes.h"
+#include "VulkanDebugCallback.hpp"
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <memory>
 #include <vector>
 
 inline std::vector<const char *> getRequiredExtensions() {
@@ -37,7 +35,7 @@ inline std::vector<const char *> getRequiredExtensions() {
 }
 const std::vector<const char *> extensions = getRequiredExtensions();
 
-const VkApplicationInfo applicationInfo = {
+constexpr VkApplicationInfo applicationInfo = {
     .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
     .pNext = nullptr,
     .pApplicationName = CONSTANTS::APP_NAME,
