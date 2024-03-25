@@ -1,0 +1,2 @@
+#define Meadow_VERSION_MAJOR @Meadow_VERSION_MAJOR@
+#define Meadow_VERSION_MINOR @Meadow_VERSION_MINOR@

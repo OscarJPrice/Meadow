@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(Meadow VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 23)
-add_compile_options(-Wall -fstack-protector -Wextra -Wpedantic -Werror 
-  -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function 
+add_compile_options(-Wall -fstack-protector -Wextra -Wpedantic -Werror
+  -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function
   -Wno-unused-but-set-variable -Wno-unused-value -Wno-unused-local-typedefs
   -Wno-unknown-pragmas -Wno-ignored-qualifiers -g)
 
 # Shader Section
   find_program(GLSLC_EXECUTABLE NAMES glslc REQUIRED)
   message(STATUS "GLSLC Found: ${GLSLC_EXECUTABLE}")
-  set(SHADER_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Working/Shaders")
+  set(SHADER_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Shader")
   set(SHADER_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SPIR-V")
   file(MAKE_DIRECTORY ${SHADER_BINARY_DIR})
   file(GLOB SHADER_FILES "${SHADER_SOURCE_DIR}/*")
@@ -36,9 +36,9 @@ find_package(Vulkan REQUIRED)
 message(STATUS "Vulkan Found: ${Vulkan_LIBRARIES}")
 
 # Source File Section
-  aux_source_directory(Working SOURCE_FILES)
-  aux_source_directory(Working/Vulkan SOURCE_FILES)
-  aux_source_directory(Working/Util SOURCE_FILES)
+  aux_source_directory(Source SOURCE_FILES)
+  aux_source_directory(Source/Vulkan SOURCE_FILES)
+  aux_source_directory(Source/Util SOURCE_FILES)
 # End Source File Section
 add_executable(Meadow ${SOURCE_FILES})
 
@@ -47,11 +47,11 @@ target_include_directories(Meadow PUBLIC ${Vulkan_INCLUDE_DIRS})
 target_link_libraries(Meadow glfw)
 target_include_directories(Meadow PUBLIC ${GLFW_INCLUDE_DIRS})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/Working/Config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/Source/Config.h)
 # Include Directories Section
-  include_directories(Working)
-  include_directories(Working/Vulkan)
-  include_directories(Working/Util)
+  include_directories(Source)
+  include_directories(Source/Vulkan)
+  include_directories(Source/Util)
 # End Include Directories Section
 
 set_target_properties(
