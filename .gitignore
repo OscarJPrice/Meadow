@@ -18,3 +18,6 @@ Logs
 SPIR-V/
 Working/Config.h
 compile_commands.json
+.cache
+.zed
+makerun
